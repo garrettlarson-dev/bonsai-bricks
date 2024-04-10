@@ -1,6 +1,7 @@
 ﻿using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Controllers
@@ -9,11 +10,14 @@ namespace Identity.Controllers
     {
         private UserManager<AppUser> userManager;
         private IPasswordHasher<AppUser> passwordHasher;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash)
+
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr)
         {
             userManager = usrMgr;
             passwordHasher = passwordHash;
+            roleManager = roleMgr;
         }
         
         public IActionResult Index()
@@ -31,11 +35,18 @@ namespace Identity.Controllers
             var lastCustomerId = await userManager.Users.MaxAsync(u => (int?)u.CustomerId) ?? 0; // If there are no users, default to 0
             // Use a ViewBag or ViewData to pass the last CustomerId to the view.
             ViewBag.LastCustomerId = lastCustomerId + 1; // Increment by 1 to get the next ID
+            
+            // Fetch the roles from the database
+            var roles = await roleManager.Roles.ToListAsync();
+
+            // Create a SelectList, assuming your roles have 'Id' and 'Name' properties
+            ViewBag.RoleList = new SelectList(roles, "Name", "Name");
+            
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(User user, string[] Roles)
         {
             if (ModelState.IsValid)
             {
@@ -70,6 +81,20 @@ namespace Identity.Controllers
                         // log email failed 
                     }
                 }*/
+                
+                // Assign selected roles to the user
+                foreach (var roleName in Roles)
+                {
+                    if (!await userManager.IsInRoleAsync(appUser, roleName))
+                    {
+                        var roleResult = await userManager.AddToRoleAsync(appUser, roleName);
+                        if (!roleResult.Succeeded)
+                        {
+                            // Handle error
+                        }
+                    }
+                }
+                
                 
                 if (result.Succeeded)
                     return RedirectToAction("AllUsers");
