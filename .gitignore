@@ -1,0 +1,68 @@
+
+*.cache
+*.targets
+*.dll
+*.info
+Identity/obj/rider.project.restore.info
+Identity/obj/rider.project.model.nuget.info
+Identity/obj/project.packagespec.json
+Identity/obj/project.nuget.cache
+Identity/obj/project.assets.json
+Identity/obj/Identity.csproj.nuget.dgspec.json
+Identity/obj/Identity.csproj.EntityFrameworkCore.targets
+Identity/obj/Debug/net8.0/staticwebassets.pack.json
+Identity/obj/Debug/net8.0/staticwebassets.development.json
+Identity/obj/Debug/net8.0/staticwebassets.build.json
+Identity/obj/Debug/net8.0/refint/Identity.dll
+Identity/obj/Debug/net8.0/ref/Identity.dll
+Identity/obj/Debug/net8.0/ref/Identity 2.dll
+Identity/obj/Debug/net8.0/Identity.sourcelink.json
+Identity/obj/Debug/net8.0/Identity.pdb
+Identity/obj/Debug/net8.0/Identity.genruntimeconfig.cache
+Identity/obj/Debug/net8.0/Identity.GeneratedMSBuildEditorConfig.editorconfig
+Identity/obj/Debug/net8.0/Identity.dll
+Identity/obj/Debug/net8.0/Identity.csproj.FileListAbsolute.txt
+Identity/obj/Debug/net8.0/Identity.csproj.CoreCompileInputs.cache
+Identity/obj/Debug/net8.0/Identity.assets.cache
+Identity/obj/Debug/net8.0/Identity.AssemblyInfoInputs.cache
+Identity/obj/Debug/net8.0/Identity.AssemblyInfo.cs
+Identity/Identity.csproj
+Identity/bin/Debug/net8.0/zh-Hans/Microsoft.CodeAnalysis.resources 2.dll
+Identity/bin/Debug/net8.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources 2.dll
+Identity/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Windows.Extensions 2.dll
+Identity/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Security.Cryptography.ProtectedData 2.dll
+Identity/bin/Debug/net8.0/runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI 2.dll
+Identity/bin/Debug/net8.0/runtimes/win-x64/native/e_sqlite3 2.dll
+Identity/bin/Debug/net8.0/runtimes/win-arm64/native/e_sqlite3 2.dll
+Identity/bin/Debug/net8.0/runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI 2.dll
+Identity/bin/Debug/net8.0/runtimes/unix/lib/net6.0/System.Drawing.Common 2.dll
+Identity/bin/Debug/net8.0/runtimes/unix/lib/net6.0/Microsoft.Data.SqlClient 2.dll
+Identity/bin/Debug/net8.0/runtimes/osx-arm64/native/libe_sqlite3 2.dylib
+Identity/bin/Debug/net8.0/runtimes/maccatalyst-arm64/native/libe_sqlite3 2.dylib
+Identity/bin/Debug/net8.0/runtimes/linux-x86/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/linux-s390x/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/linux-musl-x64/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/linux-musl-arm/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/linux-armel/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/linux-arm64/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/linux-arm/native/libe_sqlite3 2.so
+Identity/bin/Debug/net8.0/runtimes/browser-wasm/nativeassets/net8.0/e_sqlite3 2.a
+Identity/bin/Debug/net8.0/ja/Microsoft.CodeAnalysis.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/ja/Microsoft.CodeAnalysis.CSharp.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/ja/Microsoft.CodeAnalysis.CSharp.resources 2.dll
+Identity/bin/Debug/net8.0/Identity.staticwebassets.runtime.json
+Identity/bin/Debug/net8.0/Identity.pdb
+Identity/bin/Debug/net8.0/Identity.dll
+Identity/bin/Debug/net8.0/es/Microsoft.CodeAnalysis.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/es/Microsoft.CodeAnalysis.resources 2.dll
+Identity/bin/Debug/net8.0/es/Microsoft.CodeAnalysis.CSharp.resources 2.dll
+Identity/bin/Debug/net8.0/de/Microsoft.CodeAnalysis.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/de/Microsoft.CodeAnalysis.resources 2.dll
+Identity/bin/Debug/net8.0/de/Microsoft.CodeAnalysis.CSharp.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/de/Microsoft.CodeAnalysis.CSharp.resources 2.dll
+Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.resources 2.dll
+Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.CSharp.Workspaces.resources 2.dll
+Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.CSharp.resources 2.dll
+.idea/.idea.Identity/.idea/vcs.xml
