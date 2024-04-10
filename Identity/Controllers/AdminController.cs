@@ -15,8 +15,13 @@ namespace Identity.Controllers
             userManager = usrMgr;
             passwordHasher = passwordHash;
         }
-
+        
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult AllUsers()
         {
             return View(userManager.Users);
         }
@@ -59,7 +64,7 @@ namespace Identity.Controllers
                     bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
 
                     if (emailResponse)
-                        return RedirectToAction("Index");
+                        return RedirectToAction("AllUsers");
                     else
                     {
                         // log email failed 
@@ -67,7 +72,7 @@ namespace Identity.Controllers
                 }*/
                 
                 if (result.Succeeded)
-                    return RedirectToAction("Index");
+                    return RedirectToAction("AllUsers");
                 else
                 {
                     foreach (IdentityError error in result.Errors)
@@ -83,7 +88,7 @@ namespace Identity.Controllers
             if (user != null)
                 return View(user);
             else
-                return RedirectToAction("Index");
+                return RedirectToAction("AllUsers");
         }
 
         [HttpPost]
@@ -136,7 +141,7 @@ namespace Identity.Controllers
                 {
                     IdentityResult result = await userManager.UpdateAsync(user);
                     if (result.Succeeded)
-                        return RedirectToAction("Index");
+                        return RedirectToAction("AllUsers");
                     else
                         Errors(result);
                 }
@@ -160,13 +165,13 @@ namespace Identity.Controllers
             {
                 IdentityResult result = await userManager.DeleteAsync(user);
                 if (result.Succeeded)
-                    return RedirectToAction("Index");
+                    return RedirectToAction("AllUsers");
                 else
                     Errors(result);
             }
             else
                 ModelState.AddModelError("", "User Not Found");
-            return View("Index", userManager.Users);
+            return View("AllUsers", userManager.Users);
         }
     }
 }
