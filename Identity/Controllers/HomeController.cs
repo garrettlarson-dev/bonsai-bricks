@@ -13,18 +13,23 @@ namespace Identity.Controllers
             userManager = userMgr;
         }
 
-        [Authorize]
         //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> Index()
         {
-            AppUser user = await userManager.GetUserAsync(HttpContext.User);
-            string message = "Hello " + user.UserName;
-            return View((object)message);
+            // AppUser user = await userManager.GetUserAsync(HttpContext.User);
+            // string message = "Hello " + user.UserName;
+            // return View((object)message);
+            return View();
         }
 
         public async Task<IActionResult> Privacy()
         {
             return View(Privacy);
+        }
+        
+        public async Task<IActionResult> AboutMe()
+        {
+            return View(AboutMe);
         }
     }
 }
