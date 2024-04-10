@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Models
 {
-    public partial class Lineitem
+    public partial class LineItem
     {
-        public int? TransactionId { get; set; }
+        [Key]
+        public int TransactionId { get; set; }
 
         public byte? ProductId { get; set; }
 

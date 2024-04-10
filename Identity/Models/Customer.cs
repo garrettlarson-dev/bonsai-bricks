@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Identity.Models
 {
     public partial class Customer
     {
-        public int? CustomerId { get; set; }
+        [Key]
+        public int CustomerId { get; set; }
 
         public string? FirstName { get; set; }
 

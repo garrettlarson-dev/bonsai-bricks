@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Identity.Models
 {
     public partial class Order
     {
-        public int? TransactionId { get; set; }
+        [Key]
+        public int TransactionId { get; set; }
 
         public int? CustomerId { get; set; }
 

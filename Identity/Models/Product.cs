@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Identity.Models
 {
     public partial class Product
     {
-        public byte? ProductId { get; set; }
+        [Key]
+        public byte ProductId { get; set; }
 
         public string? Name { get; set; }
 
