@@ -62,7 +62,22 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Lockout.AllowedForNewUsers = true;
     opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
     opts.Lockout.MaxFailedAccessAttempts = 3;
+    opts.User.RequireUniqueEmail = true;
+    opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
 });
+
+builder.Services.Configure<IdentityOptions>(opts =>
+{
+    opts.SignIn.RequireConfirmedEmail = true;
+});
+
+builder.Services.AddAuthentication()
+    .AddGoogle(opts =>
+    {
+        opts.ClientId = "838146018695-a4hp8qifmjq6dbntp494u6lpotol4g7u.apps.googleusercontent.com";
+        opts.ClientSecret = "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";
+        opts.SignInScheme = IdentityConstants.ExternalScheme;
+    });
 
 /*builder.Services.Configure<IdentityOptions>(opts =>
 {

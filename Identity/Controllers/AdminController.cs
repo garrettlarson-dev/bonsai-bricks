@@ -66,21 +66,20 @@ namespace Identity.Controllers
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 
-                // uncomment for email confirmation (link - https://www.yogihosting.com/aspnet-core-identity-email-confirmation/)
-                /*if (result.Succeeded)
+                if (result.Succeeded)
                 {
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
                     var confirmationLink = Url.Action("ConfirmEmail", "Email", new { token, email = user.Email }, Request.Scheme);
                     EmailHelper emailHelper = new EmailHelper();
                     bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
-
+             
                     if (emailResponse)
-                        return RedirectToAction("AllUsers");
+                        return RedirectToAction("Index");
                     else
                     {
                         // log email failed 
                     }
-                }*/
+                }
                 
                 // Assign selected roles to the user
                 foreach (var roleName in Roles)

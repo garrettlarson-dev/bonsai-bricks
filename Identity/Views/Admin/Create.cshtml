@@ -3,47 +3,76 @@
     ViewData["Title"] = "CREATE USER";
     int nextCustomerId = ViewBag.LastCustomerId as int? ?? 0; // This will safely handle nulls
 }
-  
+
 <h1 class="bg-info text-white">Create User</h1>
 <a asp-action="Index" class="btn btn-secondary">Back</a>
 <div asp-validation-summary="All" class="text-danger"></div>
-  
+
 <form method="post">
     <input type="hidden" asp-for="CustomerId" value="@nextCustomerId" />
     <div class="form-group">
-        <label asp-for="Name"></label>
+        <label asp-for="Name">Username</label>
         <input asp-for="Name" class="form-control"/>
     </div>
     <div class="form-group">
-        <label asp-for="Email"></label>
+        <label asp-for="Email">Email</label>
         <input asp-for="Email" class="form-control"/>
     </div>
     <div class="form-group">
-        <label asp-for="Password"></label>
+        <label asp-for="Password">Password</label>
         <input asp-for="Password" class="form-control"/>
     </div>
     <div class="form-group">
-        <label asp-for="FirstName"></label>
+        <label asp-for="FirstName">First Name</label>
         <input asp-for="FirstName" class="form-control"/>
     </div>
     <div class="form-group">
-        <label asp-for="LastName"></label>
+        <label asp-for="LastName">Last Name</label>
         <input asp-for="LastName" class="form-control"/>
     </div>
     <div class="form-group">
-        <label asp-for="BirthDate"></label>
-        <input asp-for="BirthDate" class="form-control"/>
+        <label asp-for="BirthDate">Birth Date</label>
+        <input type="date" asp-for="BirthDate" class="form-control datepicker">
     </div>
     <div class="form-group">
-        <label asp-for="CountryOfResidence"></label>
-        <input asp-for="CountryOfResidence" class="form-control"/>
+        <label asp-for="CountryOfResidence">Country of Residence</label>
+        <select asp-for="CountryOfResidence" class="form-control">
+            <option value="">Please Select</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="India">India</option>
+            <option value="China">China</option>
+            <option value="Brazil">Brazil</option>
+            <option value="Mexico">Mexico</option>
+            <option value="Japan">Japan</option>
+            <option value="Italy">Italy</option>
+            <option value="Russia">Russia</option>
+            <option value="South Korea">South Korea</option>
+            <option value="Spain">Spain</option>
+            <option value="Indonesia">Indonesia</option>
+            <option value="Nigeria">Nigeria</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Colombia">Colombia</option>
+            <option value="South Africa">South Africa</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Gender">Gender</label>
+        <select asp-for="Gender" class="form-control">
+            <option value="">Please Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
     </div>
     <div class="form-group">
-        <label asp-for="Gender"></label>
-        <input asp-for="Gender" class="form-control"/>
-    </div>
-    <div class="form-group">
-        <label asp-for="Age"></label>
+        <label asp-for="Age">Age</label>
         <input asp-for="Age" class="form-control"/>
     </div>
     <div class="form-group">
