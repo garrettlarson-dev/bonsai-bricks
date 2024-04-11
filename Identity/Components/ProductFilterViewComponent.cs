@@ -22,12 +22,16 @@ namespace Identity.Components
 
         public IViewComponentResult Invoke()
         {
+            ViewBag.SelectedCategory = RouteData?.Values["category"];
+            
             var categories = _context.Products
                 .Select(x => x.Category)
                 .Distinct()
                 .OrderBy(x => x)
                 .ToList();
 
+            ViewBag.SelectedColor = RouteData?.Values["color"];
+            
             var colors = _context.Products
                 .Select(x => x.PrimaryColor)
                 .Distinct()
