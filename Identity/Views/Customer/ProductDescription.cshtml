@@ -1,41 +1,52 @@
-@using Identity.Components
-@model Identity.Models.Product
+@model Identity.Models.ViewModelsTwo.ProductRecViewModel
 
-<h1>Product Details - @Model.ProductId</h1>
+<style>
+    .card {
+        height: 100%;
+    }
+
+    .card-img-top {
+        object-fit: contain;
+        height: 200px; /* Set the height of the image */
+    }
+</style>
+
+<h1>Product Details - @Model.ProductName2.ProductId</h1>
 <div class="container">
-    <h1>@Model.Name</h1>
+    <h1>@Model.ProductName2.Name</h1>
     <div class="row">
         <div class="col-md-6">
-            <img src="@Model.ImgLink" class="img-fluid" alt="@Model.Name">
+            <img src="@Model.ProductName2.ImgLink" class="img-fluid" alt="@Model.ProductName2.Name">
         </div>
         <div class="col-md-6">
-            <h4>Price: $@Model.Price</h4>
-            <p>@Model.Description</p>
-            <p>Category: @Model.Category</p>
-            <p>Number of Parts: @Model.NumParts</p>
+            <h4>Price: $@Model.ProductName2.Price</h4>
+            <p>@Model.ProductName2.Description</p>
+            <p>Category: @Model.ProductName2.Category</p>
+            <p>Number of Parts: @Model.ProductName2.NumParts</p>
             <!-- Add more details as needed -->
         </div>
     </div>
 </div>
 
-<vc:product-category />
 
+<div class="container">
+    <h2>Related Products</h2>
+    <div class="row">
+        @foreach (var product in Model.RelatedProducts)
+        {
+            <div class="col-md-2 mb-3">
+                <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
+                    <div class="card">
+                        <img src="@product.ImgLink" class="card-img-top" alt="@product.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p>Price: $@product.Price</p>
+                            <!-- Add other product information here -->
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
 
-@* <div class="container"> *@
-@*     <h2>Related Products</h2> *@
-@*     <div class="row"> *@
-@*         @foreach (var product in Model) *@
-@*         { *@
-@*             <div class="col-md-3 mb-3"> *@
-@*                 <div class="card"> *@
-@*                     <img src="@product.ImgLink" class="card-img-top" alt="@product.Name"> *@
-@*                     <div class="card-body"> *@
-@*                         <h5 class="card-title">@product.Name</h5> *@
-@*                         <p>Price: $@product.Price</p> *@
-@*                         <!-- Add other product information here --> *@
-@*                     </div> *@
-@*                 </div> *@
-@*             </div> *@
-@*         } *@
-@*     </div> *@
-@* </div> *@

@@ -1,0 +1,56 @@
+@model Product
+
+<h2>Add Product</h2>
+
+<form asp-controller="Admin" asp-action="AddProducts" method="post">
+    
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Year"></label>
+            <input asp-for="Year" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="NumParts"></label>
+            <input asp-for="NumParts" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Price"></label>
+            <input asp-for="Price" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="ImgLink"></label>
+            <input asp-for="ImgLink" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="PrimaryColor"></label>
+            <input asp-for="PrimaryColor" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="SecondaryColor"></label>
+            <input asp-for="SecondaryColor" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+        </div>
+    
+        
+        <div class="form-group">
+            <label asp-for="Category"></label>
+            <input asp-for="Category" class="form-control" />
+        </div>
+
+    <!-- Add other fields for product details (e.g., Year, NumParts, Price, etc.) -->
+
+    <button type="submit" class="btn btn-primary">Add Product</button>
+</form>

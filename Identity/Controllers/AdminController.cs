@@ -6,18 +6,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Controllers
 {
+    
     public class AdminController : Controller
     {
         private UserManager<AppUser> userManager;
         private IPasswordHasher<AppUser> passwordHasher;
         private readonly RoleManager<IdentityRole> roleManager;
+        
+        private readonly AppIdentityDbContext _context;
 
-
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr)
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr, AppIdentityDbContext context)
         {
             userManager = usrMgr;
             passwordHasher = passwordHash;
             roleManager = roleMgr;
+            _context = context;
         }
         
         public IActionResult Index()
@@ -182,5 +185,99 @@ namespace Identity.Controllers
                 ModelState.AddModelError("", "User Not Found");
             return View("AllUsers", userManager.Users);
         }
+        
+        [HttpGet]
+        public IActionResult EditProducts(int id)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+        
+        [HttpPost]
+        public IActionResult EditProducts(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                // Update the product in the database
+                _context.Products.Update(product);
+                _context.SaveChanges();
+        
+                // Redirect to the index page
+                return RedirectToAction("Index", "Customer");
+            }
+
+            // If the model state is not valid, return the view with the validation errors
+            return View(product);
+        }
+        
+        [HttpGet]
+        public IActionResult AddProducts()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddProducts(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                byte maxProductId = _context.Products.Max(p => p.ProductId);
+
+                // Ensure that the new ProductID doesn't exceed 255
+                if (maxProductId == byte.MaxValue)
+                {
+                    // Handle the case where the maximum ProductID has reached the maximum value
+                    // You could throw an exception or handle it in another way
+                    return BadRequest("Maximum ProductID reached.");
+                }
+
+                // Assign the new ProductID as the maximum ProductID + 1
+                product.ProductId = (byte)(maxProductId + 1);
+                
+                // Add the product to your database
+                _context.Products.Add(product);
+                _context.SaveChanges();
+        
+                return RedirectToAction("Index", "Customer");
+            }
+
+            return View(product); // If model state is not valid, return the form with errors
+        }
+        
+        [HttpGet]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+        
+        [HttpPost]
+        public IActionResult DeleteProduct(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                // Update the product in the database
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+        
+                // Redirect to the index page
+                return RedirectToAction("Index", "Customer");
+            }
+
+            // If the model state is not valid, return the view with the validation errors
+            return View(product);
+        }
+        
+
     }
 }

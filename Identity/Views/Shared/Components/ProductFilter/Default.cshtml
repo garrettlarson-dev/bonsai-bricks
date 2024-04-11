@@ -1,0 +1,17 @@
+@model Identity.Components.ProductFilterViewComponent.FilterOptions
+
+<div class="d-grid gap-2">
+    <a class="btn btn-outline-secondary" asp-controller="Customer" asp-action="Index" asp-route-category="">Home</a>
+    
+    @foreach (string category in Model.Categories ?? Enumerable.Empty<string>())
+    {
+        <a class="btn btn-outline-secondary" asp-controller="Customer" asp-action="Index" asp-route-category="@category">@category</a>
+    }
+</div>
+
+<div>
+    @foreach (string color in Model.Colors ?? Enumerable.Empty<string>())
+    {
+        <a class="btn btn-outline-secondary" asp-controller="Customer" asp-action="Index" asp-route-primaryColor="@color">@color</a>
+    }
+</div>
