@@ -25,15 +25,19 @@
     </style>
 </head>
 <body>
+@if (User?.Identity?.IsAuthenticated ?? false)
+{
+    <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
+}
 <div class="container">
-        <div class="column">
-            <a href="Account/Products" class="button">Products</a>
-        </div>
-        <div class="column">
-            <a href="Admin/AllUsers" class="button">Users</a>
-        </div>
-        <div class="column">
-            <a href="Admin/Orders" class="button">Orders</a>
-        </div>
+    <div class="column">
+        <a href="Account/Products" class="button">Products</a>
     </div>
+    <div class="column">
+        <a href="Admin/AllUsers" class="button">Users</a>
+    </div>
+    <div class="column">
+        <a href="Admin/Orders" class="button">Orders</a>
+    </div>
+</div>
 </body>

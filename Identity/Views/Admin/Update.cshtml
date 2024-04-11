@@ -1,10 +1,11 @@
-﻿@model AppUser
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model AppUser
 @{
 	ViewData["Title"] = "UPDATE USER";
 }
 
 <h1 class="bg-info text-white">Update User</h1>
-<a asp-action="Index" class="btn btn-secondary">Back</a>
+<a asp-action="AllUsers" class="btn btn-secondary">Back</a>
 <div asp-validation-summary="All" class="text-danger"></div>
 
 <form asp-action="Update" method="post">
@@ -12,37 +13,80 @@
 		<label asp-for="Id"></label>
 		<input asp-for="Id" class="form-control" disabled />
 	</div>
-	<div class="form-group">
-		<label asp-for="Email"></label>
-		<input asp-for="Email" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label for="password">Password</label>
-		<input name="password" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label asp-for="FirstName"></label>
-		<input asp-for="FirstName" class="form-control"/>
-	</div>
-	<div class="form-group">
-		<label asp-for="LastName"></label>
-		<input asp-for="LastName" class="form-control"/>
-	</div>
-	<div class="form-group">
-		<label asp-for="BirthDate"></label>
-		<input asp-for="BirthDate" class="form-control"/>
-	</div>
-	<div class="form-group">
-		<label asp-for="CountryOfResidence"></label>
-		<input asp-for="CountryOfResidence" class="form-control"/>
-	</div>
-	<div class="form-group">
-		<label asp-for="Gender"></label>
-		<input asp-for="Gender" class="form-control"/>
-	</div>
-	<div class="form-group">
-		<label asp-for="Age"></label>
-		<input asp-for="Age" class="form-control"/>
-	</div>
-	<button type="submit" class="btn btn-primary">Save</button>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control"/>
+    </div>
+    <div class="form-group">
+    		<label for="password">Password</label>
+            <input name="password" class="form-control" />
+            </div>
+    <div class="form-group">
+    		<label asp-for="FirstName"></label>
+    		<input asp-for="FirstName" class="form-control"/>
+    	</div>
+    	<div class="form-group">
+    		<label asp-for="LastName"></label>
+    		<input asp-for="LastName" class="form-control"/>
+    	</div>
+    <div class="form-group">
+        <label asp-for="BirthDate"></label>
+        <input type="date" asp-for="BirthDate" class="form-control datepicker">
+    </div>
+    <div class="form-group">
+        <label asp-for="CountryOfResidence"></label>
+        <select asp-for="CountryOfResidence" class="form-control">
+            <option value="">Please Select</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="India">India</option>
+            <option value="China">China</option>
+            <option value="Brazil">Brazil</option>
+            <option value="Mexico">Mexico</option>
+            <option value="Japan">Japan</option>
+            <option value="Italy">Italy</option>
+            <option value="Russia">Russia</option>
+            <option value="South Korea">South Korea</option>
+            <option value="Spain">Spain</option>
+            <option value="Indonesia">Indonesia</option>
+            <option value="Nigeria">Nigeria</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Colombia">Colombia</option>
+            <option value="South Africa">South Africa</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender" class="form-control">
+            <option value="">Please Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Age"></label>
+        <input asp-for="Age" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label for="roles">Roles</label>
+        <select id="roles" name="Roles" class="form-control">
+            <option value="@ViewBag.CurrentRole" selected>@ViewBag.CurrentRole</option>
+            @foreach (var role in ViewBag.RoleList)
+            {
+                if (role.Text == ViewBag.CurrentRole)
+                {
+                    continue;
+                }
+                <option value="@role.Value">@role.Text</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
 </form>
