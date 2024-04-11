@@ -194,16 +194,23 @@
                         <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
                       </div>
                       <div class="card-body">
-                        <a asp-controller="Admin" asp-action="EditProducts" asp-route-id="@product.ProductId" class="card-link product-link">Edit Product</a>
-                        <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="card-link product-link">Delete Product</a>
-                        <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="btnspecial btn-yellowspecial">Add to Cart</a>
-
-                        <hr>
-                        <center>
-                          <h5 class="card-title">@product.Name</h5>
-                          <h5 class="card-title">$@product.Price</h5>
-                        </center>
+                          @if (User.IsInRole("Admin"))
+                          {
+                              <a asp-controller="Admin" asp-action="EditProducts" asp-route-id="@product.ProductId" class="card-link product-link">Edit Product</a>
+                              <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="card-link product-link">Delete Product</a>
+                          }
+                          else if (User.IsInRole("Customer"))
+                          {
+                              <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="btnspecial btn-yellowspecial">Add to Cart</a>
+                          }
+                      
+                          <hr>
+                          <center>
+                              <h5 class="card-title">@product.Name</h5>
+                              <h5 class="card-title">$@product.Price</h5>
+                          </center>
                       </div>
+
                     </div>
                   </a>
                 </div>

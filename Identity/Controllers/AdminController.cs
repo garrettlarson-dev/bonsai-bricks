@@ -143,6 +143,21 @@ namespace Identity.Controllers
             }
             return RedirectToAction("AllUsers");
         }
+        
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RedirectToUpdate()
+        {
+            // Get the user ID of the currently logged-in user
+            var userId = User.Identity.Name;
+
+            // Construct the redirect URL with the user ID appended
+            var redirectUrl = $"/Admin/Update/{userId}";
+
+            // Redirect to the constructed URL
+            return Redirect(redirectUrl);
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Update(string id, string email, string password, string firstName, string lastName, DateOnly birthDate, string countryOfResidence, string gender, double age, string[] Roles)
