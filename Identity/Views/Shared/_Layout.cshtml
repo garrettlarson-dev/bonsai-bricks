@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var userRoles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,7 +17,22 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Identity.styles.css" asp-append-version="true" />
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -19,33 +44,139 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Secured Page</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login" asp-route-ReturnUrl="/">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Tools</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AllUsers">All Users</a>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if(userRoles.Contains("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Tools</a>
+                                </li>
+                                <li class="nav-item"> 
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">View Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AllUsers">All Users</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Orders">Orders</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Profile
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                                        @if (User.IsInRole("Customer"))
+                                        {
+                                            <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="UpdateCustomer">Update Profile</a>
+                                        }
+                                        else if (User.IsInRole("Admin"))
+                                        {
+                                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Update" asp-route-id="@User.Identity.Name">Update Profile (Admin)</a>
+                                        }
+        
+                                        @if (User?.Identity?.IsAuthenticated ?? false)
+                                        {
+                                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                                <button type="submit" class="btn btn-danger dropdown-item">Logout</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </li>
+
+
+
+                            }
+                            else if(userRoles.Contains("Customer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item"> 
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">View Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AboutMe">About Me</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                </li>
+                                <li class="nav-item"> 
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Cart">View Cart</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Profile
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                                        @if (User.IsInRole("Customer"))
+                                        {
+                                            <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="UpdateCustomer">Update Profile</a>
+                                        }
+                                        else if (User.IsInRole("Admin"))
+                                        {
+                                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Update" asp-route-id="@User.Identity.Name">Update Profile (Admin)</a>
+                                        }
+        
+                                        @if (User?.Identity?.IsAuthenticated ?? false)
+                                        {
+                                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                                <button type="submit" class="btn btn-danger dropdown-item">Logout</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </li>
+
+
+
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">View Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AboutMe">About Me</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login" asp-route-ReturnUrl="/">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register" asp-route-ReturnUrl="/">Register</a>
+                                </li>
+                                <!-- Add more default links here -->
+                            }
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Create">Create User</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">All Roles</a>
-                        </li>
-                        <li class="nav-item"> 
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Create">Create Role</a>
-                        </li>
-                        <li class="nav-item"> 
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">View Products</a>
-                        </li>
-                        <li class="nav-item"> 
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Cart">View Cart</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">View Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AboutMe">About Me</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login" asp-route-ReturnUrl="/">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register" asp-route-ReturnUrl="/">Register</a>
+                            </li>
+                            <!-- Add more default links here -->
+                        }
                     </ul>
                 </div>
             </div>

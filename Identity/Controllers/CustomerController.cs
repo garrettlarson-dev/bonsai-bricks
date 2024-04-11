@@ -13,11 +13,13 @@ namespace Identity.Controllers
     public class CustomerController : Controller
     {
         private readonly AppIdentityDbContext _context;
+        private UserManager<AppUser> userManager;
         private const string CartSessionKey = "Cart";
 
-        public CustomerController(AppIdentityDbContext context)
+        public CustomerController(AppIdentityDbContext context, UserManager<AppUser> userMgr)
         {
             _context = context;
+            userManager = userMgr;
         }
 
         public IActionResult Index(string? category, string? primaryColor, int pageNum = 1)
@@ -119,6 +121,10 @@ namespace Identity.Controllers
         public IActionResult Cart()
         {
             var cart = GetCurrentCart();
+            if (cart.Lines.Count == 0)
+            {
+                return View("EmptyCart");
+            }
             return View(cart);
         }
         
@@ -168,27 +174,88 @@ namespace Identity.Controllers
             return RedirectToAction("Cart");
         }
         
+        [HttpGet]
+        public async Task<IActionResult> Checkout()
+        {
+            // Check if the user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                string checkoutUrl = Url.Action("Checkout", "Customer");
+
+                // Redirect to the Login action and pass the returnUrl
+                return RedirectToAction("Login", "Account", new { returnUrl = checkoutUrl });
+            }
+
+            // If there is a logged-in user, check if they have the 'customer' role
+            // This assumes that you have role-based authorization set up and that 'UserManager' and 'RoleManager' are available through dependency injection
+            var user = await userManager.GetUserAsync(User);
+            var isInRole = await userManager.IsInRoleAsync(user, "Customer");
+
+            if (!isInRole)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            
+            var cart = GetCurrentCart();
+            if (cart.Lines.Count == 0)
+            {
+                return View("EmptyCart");
+            }
+            return View(cart);
+        }
+
+        
+        [HttpPost]
+        public async Task<IActionResult> PlaceOrder(string street, string city, string state, string zip, string country, string bank, string typeOfCard)
+        {
+            var user = await userManager.GetUserAsync(User); // Assuming you have a UserManager injected
+            var customerId = user?.CustomerId; // Replace this with your actual logic to get the CustomerId
+            var cart = GetCurrentCart();
+            
+            var order = new Order
+            {
+                TransactionId = new Random().Next(100000, 999999),
+                CustomerId = customerId,
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                DayOfWeek = DateTime.Now.DayOfWeek.ToString(),
+                Time = (byte)DateTime.Now.Hour,
+                EntryMode = "CVC",
+                Amount = (short?) cart.CalculateTotal(), // Calculate the amount based on the cart contents
+                TypeOfTransaction = "Online",
+                CountryOfTransaction = country,
+                ShippingAddress = $"{street}, {city}, {state}, {zip}, {country}",
+                Bank = bank,
+                TypeOfCard = typeOfCard,
+                Fraud = 0 // Determine how to set this value in your application logic
+            };
+
+            // Add logic to save the order and perform other necessary operations
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            HttpContext.Session.Remove(CartSessionKey);
+
+            return View("OrderConfirmation", order); // Redirect to an order confirmation page
+        }
+
         
         
-        // [HttpPost]
-        // public IActionResult ConfirmOrder()
-        // {
-        //     // Retrieve the cart from the session
-        //     var cart = GetCurrentCart();
-        //
-        //     // Here you should add the logic to process the cart and create an order.
-        //     // This typically involves creating an order record in the database,
-        //     // decrementing stock, processing payment, etc.
-        //
-        //     // After order processing:
-        //     // You might want to clear the cart:
-        //     HttpContext.Session.Remove(CartSessionKey);
-        //
-        //     // And then redirect to an order confirmation view or another appropriate view
-        //     return View("OrderConfirmation"); // Make sure to create this view
-        // }
+        [HttpGet]
+        public IActionResult OrderConfirmation()
+        {
+            // Retrieve the cart from the session
+            var cart = GetCurrentCart();
         
+            // Here you should add the logic to process the cart and create an order.
+            // This typically involves creating an order record in the database,
+            // decrementing stock, processing payment, etc.
+
+            // After order processing:
+            // You might want to clear the cart:
+            HttpContext.Session.Remove(CartSessionKey);
         
+            // And then redirect to an order confirmation view or another appropriate view
+            return View(); // Make sure to create this view
+        }       
 
     }
 

@@ -21,12 +21,12 @@
             <td>@user.UserName</td>
             <td>@user.Email</td>
             <td>
-                <a class="btn btn-sm btn-primary" asp-action="Update" asp-route-id="@user.Id">
+                <a class="btn btn-sm btn-primary" asp-action="Update" asp-controller="Admin" asp-route-id="@user.Id">
                     Update
                 </a>
             </td>
             <td>
-                <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                <form asp-action="Delete" asp-route-id="@user.Id" asp-controller="Admin" method="post">
                     <button type="submit" class="btn btn-sm btn-danger">
                         Delete
                     </button>
