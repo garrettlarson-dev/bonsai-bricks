@@ -1,10 +1,7 @@
-﻿@using Microsoft.AspNetCore.Authentication.Google
-
-@model Login
+﻿@model Login
 @{
     ViewData["Title"] = "Login";
 }
-include Microsoft.AspNetCore.Identity;
 
 <h1 class="bg-info text-white">Login</h1>
 <div class="text-danger" asp-validation-summary="All"></div>
@@ -24,5 +21,4 @@ include Microsoft.AspNetCore.Identity;
     </div>
     <button class="btn btn-primary" type="submit">Log In</button>
     <a class="btn btn-secondary" asp-action="ForgotPassword">Forgot Password</a>
-    <a class="btn btn-info" asp-action="GoogleLogin">Log In With Google</a>
 </form>
