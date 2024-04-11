@@ -21,27 +21,32 @@ namespace Identity.Controllers
             _context = context;
             userManager = userMgr;
         }
-        
-        public async Task<IActionResult> Index(string category, string primaryColor, int pageNum, int pageSize=6)
+
+        public IActionResult Index(string? category, string? primaryColor, int pageNum = 1)
         {
-            
-            var products = new ProductViewModel
+            int pageSize = 5;
+
+            var blah = new ProductListViewModel()
             {
+
                 Products = _context.Products
-                    .Skip(pageSize * (Math.Max(1, pageNum - 1))) // Skip for pagination based on selectedPageSize
-                    .Take(pageSize).Where(x => (x.Category == category ||category == null) &&
-                           (x.PrimaryColor == primaryColor || primaryColor == null)), // Take for pagination based on selectedPageSize
-                PaginationInfo = new PaginationInfo
+                    .Where(x => (x.Category == category ||category == null) &&
+                                (x.PrimaryColor == primaryColor || primaryColor == null))
+                    .OrderBy(x => x.Category)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
+
+                PaginationInfo = new PaginationInfo()
                 {
                     CurrentPage = pageNum,
                     ItemsPerPage = pageSize,
-                    TotalItems = _context.Products.Count()
-                }
+                    TotalItems = category == null ? _context.Products.Count() : _context.Products.Where(x => x.Category == category).Count()
+                },
                 
-                // CurrentLegoType = legoType,
-                // CurrentPageSize = pageSize
+                CurrentCategory = category,
+                CurrentColor = primaryColor
             };
-            return View(products);
+            return View(blah);
         }
         
         public IActionResult ProductDescription(byte id, short price, string category, short numparts, string imglink)
@@ -252,9 +257,7 @@ namespace Identity.Controllers
         
             // And then redirect to an order confirmation view or another appropriate view
             return View(); // Make sure to create this view
-        }
-        
-        
+        }       
 
     }
 
