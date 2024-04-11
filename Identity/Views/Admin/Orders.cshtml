@@ -45,7 +45,7 @@
         </div>
       
 
-@if (Model.PaginationInfo.TotalPages > 1)
+@if (Model.PaginationInfo.TotalNumPages > 1)
 {
   <div class="container">
     <div class="row justify-content-center">
@@ -55,7 +55,7 @@
           {
             <a asp-action="Orders" asp-route-pageNum="@(Model.PaginationInfo.CurrentPage - 1)" class="btn btn-primary">Previous</a>
           }
-          @if (Model.PaginationInfo.CurrentPage < Model.PaginationInfo.TotalPages)
+          @if (Model.PaginationInfo.CurrentPage < Model.PaginationInfo.TotalNumPages)
           {
             <a asp-action="Orders" asp-route-pageNum="@(Model.PaginationInfo.CurrentPage + 1)" class="btn btn-primary">Next</a>
           }
