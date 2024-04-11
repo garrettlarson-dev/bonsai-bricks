@@ -1,11 +1,11 @@
-﻿@model User
+@model User
 @{
     ViewData["Title"] = "CREATE USER";
     int nextCustomerId = ViewBag.LastCustomerId as int? ?? 0; // This will safely handle nulls
 }
 
-<h1 class="bg-info text-white">Create User</h1>
-<a asp-action="Index" class="btn btn-secondary">Back</a>
+<h1 class="bg-info text-white">Register Account</h1>
+<a asp-action="Register" class="btn btn-secondary">Back</a>
 <div asp-validation-summary="All" class="text-danger"></div>
 
 <form method="post">
@@ -75,10 +75,10 @@
         <label asp-for="Age">Age</label>
         <input asp-for="Age" class="form-control"/>
     </div>
-    <div class="form-group">
-        <label for="roles">Roles</label>
-        <select id="roles" name="Roles" asp-items="@(new SelectList(ViewBag.RoleList, "Value", "Text"))" class="form-control">
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Create</button>
+    @* <div class="form-group"> *@
+    @*     <label for="roles">Roles</label> *@
+    @*     <select id="roles" name="Roles" asp-items="@(new SelectList(ViewBag.RoleList, "Value", "Text"))" class="form-control" multiple> *@
+    @*     </select> *@
+    @* </div> *@
+    <button type="submit" class="btn btn-primary">Register</button>
 </form>

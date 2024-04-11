@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Controllers
 {
@@ -13,11 +15,14 @@ namespace Identity.Controllers
         private const string CartSessionKey = "Cart";
         private UserManager<AppUser> userManager;
         private SignInManager<AppUser> signInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private IPasswordHasher<AppUser> passwordHasher;
 
-        public AccountController(UserManager<AppUser> userMgr, SignInManager<AppUser> signinMgr)
+        public AccountController(UserManager<AppUser> usrMgr, SignInManager<AppUser> signInMan, RoleManager<IdentityRole> roleMngr)
         {
-            userManager = userMgr;
-            signInManager = signinMgr;
+            userManager = usrMgr;
+            signInManager = signInMan;
+            roleManager = roleMngr;
         }
 
         [AllowAnonymous]
@@ -42,28 +47,147 @@ namespace Identity.Controllers
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(appUser, login.Password, login.Remember, false);
 
                     if (result.Succeeded)
-                        return Redirect(login.ReturnUrl ?? "/");
-
-                    // uncomment Two Factor Authentication https://www.yogihosting.com/aspnet-core-identity-two-factor-authentication/
-                    /*if (result.RequiresTwoFactor)
                     {
-                        return RedirectToAction("LoginTwoStep", new { appUser.Email, login.ReturnUrl });
-                    }*/
-
-                    // Uncomment Email confirmation https://www.yogihosting.com/aspnet-core-identity-email-confirmation/
-                    /*bool emailStatus = await userManager.IsEmailConfirmedAsync(appUser);
-                    if (emailStatus == false)
-                    {
-                        ModelState.AddModelError(nameof(login.Email), "Email is unconfirmed, please confirm it first");
-                    }*/
-
-                    // https://www.yogihosting.com/aspnet-core-identity-user-lockout/
-                    /*if (result.IsLockedOut)
-                        ModelState.AddModelError("", "Your account is locked out. Kindly wait for 10 minutes and try again");*/
+                        // Check if the user is an Admin
+                        if (await userManager.IsInRoleAsync(appUser, "Admin"))
+                        {
+                            return RedirectToAction("Index", "Admin");
+                        }
+                        else // User is a Customer
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                    }
+                    // If login fails, show error message
+                    ModelState.AddModelError(nameof(login.Email), "Login Failed: Invalid Email or password");
                 }
-                ModelState.AddModelError(nameof(login.Email), "Login Failed: Invalid Email or password");
+                else
+                {
+                    // If user is not found, show error message
+                    ModelState.AddModelError(nameof(login.Email), "Login Failed: Invalid Email or password");
+                }
             }
+            // If model state is invalid, return the login view
             return View(login);
+        }
+
+
+        // GET: /Account/Register
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register()
+        {
+            var lastCustomerId = await userManager.Users.MaxAsync(u => (int?)u.CustomerId) ?? 0; // If there are no users, default to 0
+            // Use a ViewBag or ViewData to pass the last CustomerId to the view.
+            ViewBag.LastCustomerId = lastCustomerId + 1; // Increment by 1 to get the next ID
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(User model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new AppUser
+                {
+                    UserName = model.Name,
+                    Email = model.Email,
+                    CustomerId = model.CustomerId,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    BirthDate = model.BirthDate,
+                    CountryOfResidence = model.CountryOfResidence,
+                    Gender = model.Gender,
+                    Age = model.Age,
+                };
+
+                var result = await userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    // Assign the role "Customer" to the user
+                    await userManager.AddToRoleAsync(user, "Customer");
+
+                    // Sign in the user
+                    await signInManager.SignInAsync(user, isPersistent: false);
+
+                    // Redirect to Home/Index after successful registration
+                    return RedirectToAction("Index", "Home");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        
+        [Authorize]
+public async Task<IActionResult> UpdateCustomer()
+{
+    var user = await userManager.GetUserAsync(User);
+    if (user != null)
+        return View(user);
+    else
+        return NotFound(); // Handle the case where the user is not found
+}
+
+[HttpPost]
+public async Task<IActionResult> UpdateCustomer(AppUser model)
+{
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    var user = await userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return NotFound(); // Handle the case where the user is not found
+    }
+
+    // Update user properties
+    user.Email = model.Email;
+    user.FirstName = model.FirstName;
+    user.LastName = model.LastName;
+    user.CountryOfResidence = model.CountryOfResidence;
+    user.BirthDate = model.BirthDate;
+    user.Gender = model.Gender;
+    user.Age = model.Age;
+
+    // Update the user's password if provided
+    if (!string.IsNullOrEmpty(model.PasswordHash))
+    {
+        user.PasswordHash = passwordHasher.HashPassword(user, model.PasswordHash);
+    }
+
+    var result = await userManager.UpdateAsync(user);
+    if (result.Succeeded)
+    {
+        return RedirectToAction("Index", "Home"); // Redirect to home page after successful update
+    }
+    else
+    {
+        // Handle the case where the update fails
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
+        return View(model);
+    }
+}
+
+        
+        private void Errors(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors)
+                ModelState.AddModelError("", error.Description);
         }
 
         public async Task<IActionResult> Logout()

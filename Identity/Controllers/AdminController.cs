@@ -1,4 +1,5 @@
-﻿using Identity.Models;
+using Identity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Identity.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ namespace Identity.Controllers
             _context = context;
         }
         
+        [Authorize]
         public IActionResult Index()
         {
             return View();
@@ -47,17 +49,23 @@ namespace Identity.Controllers
             return View(orders);
         }
 
+        [Authorize]
         public IActionResult AllUsers()
         {
             return View(userManager.Users);
         }
 
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             var lastCustomerId = await userManager.Users.MaxAsync(u => (int?)u.CustomerId) ?? 0; // If there are no users, default to 0
             // Use a ViewBag or ViewData to pass the last CustomerId to the view.
             ViewBag.LastCustomerId = lastCustomerId + 1; // Increment by 1 to get the next ID
-            ViewBag.RoleList = new SelectList(await roleManager.Roles.ToListAsync(), "Name", "Name");
+            ViewBag.RoleList = new SelectList(
+                await roleManager.Roles.OrderByDescending(r => r.Name).ToListAsync(),
+                "Name",
+                "Name"
+            );
             return View();
         }
 
@@ -113,17 +121,31 @@ namespace Identity.Controllers
             return View(user);
         }
 
+        [Authorize]
         public async Task<IActionResult> Update(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
+            {
+                ViewBag.RoleList = new SelectList(
+                    await roleManager.Roles.OrderByDescending(r => r.Name).ToListAsync(),
+                    "Name",
+                    "Name"
+                );                
+                var userRoles = await userManager.GetRolesAsync(user);
+                var isCustomer = await userManager.IsInRoleAsync(user, "Customer");
+                if (isCustomer)
+                    ViewBag.CurrentRole = "Customer";
+                else
+                    ViewBag.CurrentRole = "Admin";
+
                 return View(user);
-            else
-                return RedirectToAction("AllUsers");
+            }
+            return RedirectToAction("AllUsers");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(string id, string email, string password, string firstName, string lastName, DateOnly birthDate, string countryOfResidence, string gender, double age)
+        public async Task<IActionResult> Update(string id, string email, string password, string firstName, string lastName, DateOnly birthDate, string countryOfResidence, string gender, double age, string[] Roles)
         {
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
@@ -172,9 +194,30 @@ namespace Identity.Controllers
                 {
                     IdentityResult result = await userManager.UpdateAsync(user);
                     if (result.Succeeded)
+                    {
+                        // Assign roles to the user
+                        foreach (var roleName in Roles)
+                        {
+                            if (!await userManager.IsInRoleAsync(user, roleName))
+                            {
+                                var roleResult = await userManager.AddToRoleAsync(user, roleName);
+                                if (!roleResult.Succeeded)
+                                {
+                                    // Handle error
+                                    Errors(roleResult);
+                                }
+                            }
+                        }
+
+                        // Redirect or handle success
                         return RedirectToAction("AllUsers");
+                    }
                     else
-                        Errors(result);
+                    {
+                        // Handle failure
+                        foreach (IdentityError error in result.Errors)
+                            ModelState.AddModelError("", error.Description);
+                    }
                 }
             }
             else
