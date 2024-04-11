@@ -11,33 +11,35 @@
         <form asp-action="UpdateCart" asp-controller="Customer" method="post">
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 0; i < Model.Lines.Count; i++)
-                    {
-                        <tr>
-                            <td>@Model.Lines[i].Product.Name</td>
-                            <td>
-                                <input type="number" name="items[@i].Quantity" value="@Model.Lines[i].Quantity" min="1" />
-                                <input type="hidden" name="items[@i].Product.ProductId" value="@Model.Lines[i].Product.ProductId" />
-                            </td>
-                            <td>@Model.Lines[i].Product.Price</td>
-                            <td>@(Model.Lines[i].Quantity * Model.Lines[i].Product.Price)</td>
-                            <td>
-                                <button type="submit" formaction="@Url.Action("RemoveFromCart", "Customer", new { productId = Model.Lines[i].Product.ProductId })">Remove</button>
-                            </td>
-                        </tr>
-                    }
+                @for (int i = 0; i < Model.Lines.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.Lines[i].Product.Name</td>
+                        <td>
+                            <input type="number" name="items[@i].Quantity" value="@Model.Lines[i].Quantity" min="1" />
+                            <input type="hidden" name="items[@i].Product.ProductId" value="@Model.Lines[i].Product.ProductId" />
+                        </td>
+                        <td>@Model.Lines[i].Product.Price</td>
+                        <td>@(Model.Lines[i].Quantity * Model.Lines[i].Product.Price)</td>
+                        <td>
+                            <button class="btn btn-danger" type="submit" formaction="@Url.Action("RemoveFromCart", "Customer", new { productId = Model.Lines[i].Product.ProductId })">Remove</button>
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
-            <button type="submit">Update Cart</button>
+            <button class="btn btn-primary" type="submit" formaction="@Url.Action("UpdateCart", "Customer")">Update Cart</button>
+            <a class="btn-primary btn" asp-area="" asp-controller="Customer" asp-action="Index">Keep Shopping</a>
+            <a class="btn-primary btn" asp-area="" asp-controller="Customer" asp-action="Checkout">Go to Checkout</a>
         </form>
         <p>Total: @Model.Lines.Sum(item => item.Product.Price * item.Quantity)</p>
 </body>

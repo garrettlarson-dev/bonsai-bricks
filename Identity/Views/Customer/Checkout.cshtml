@@ -1,0 +1,71 @@
+@model Cart
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Lines.Count; i++)
+        {
+            <tr>
+                <td>@Model.Lines[i].Product.Name</td>
+                <td>
+                    <input type="number" name="items[@i].Quantity" value="@Model.Lines[i].Quantity" min="1" />
+                    <input type="hidden" name="items[@i].Product.ProductId" value="@Model.Lines[i].Product.ProductId" />
+                </td>
+                <td>@Model.Lines[i].Product.Price</td>
+                <td>@(Model.Lines[i].Quantity * Model.Lines[i].Product.Price)</td>
+                <td>
+                    <button type="submit" formaction="@Url.Action("RemoveFromCart", "Customer", new { productId = Model.Lines[i].Product.ProductId })">Remove</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-action="PlaceOrder" asp-controller="Customer" method="post">
+    <h2>Shipping Address</h2>
+    <div>
+        <label for="street">Street:</label>
+        <input type="text" id="street" name="street" required>
+    </div>
+    <div>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+    </div>
+    <div>
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required>
+    </div>
+    <div>
+        <label for="zip">Zip Code:</label>
+        <input type="text" id="zip" name="zip" required>
+    </div>
+    <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required>
+    </div>
+
+    <h2>Bank and Payment Information</h2>
+    <div>
+        <label for="bank">Bank Name:</label>
+        <input type="text" id="bank" name="bank" required>
+    </div>
+    <div>
+        <label for="typeOfCard">Type of Card:</label>
+        <select id="typeOfCard" name="typeOfCard" required>
+            <option value="Visa">Visa</option>
+            <option value="MasterCard">MasterCard</option>
+            <option value="AmericanExpress">American Express</option>
+            <option value="Discover">Discover</option>
+            <option value="JCB">JCB</option>
+        </select>
+    </div>
+    <button type="submit">Place Order</button>
+</form>
