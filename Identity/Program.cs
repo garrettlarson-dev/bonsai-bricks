@@ -57,6 +57,14 @@ builder.Services.AddAuthorization(opts =>
     });
 });
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the session timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
 builder.Services.AddTransient<IAuthorizationHandler, AllowPrivateHandler>();
 builder.Services.AddAuthorization(opts =>
 {
@@ -95,6 +103,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession(); // Enable session before UseEndpoints
 
 app.UseAuthentication();
 app.UseAuthorization();

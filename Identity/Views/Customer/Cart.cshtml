@@ -1,62 +1,46 @@
-@Model Cart
+@model Cart
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .total {
-            font-weight: bold;
-        }
-    </style>
+    <!-- Add other necessary meta tags and CSS links -->
 </head>
 <body>
     <h1>Shopping Cart</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var line in Model.Cart?.Lines ?? Enumerable.Empty<Cart.CartLine>())
-            {
+        <form asp-action="UpdateCart" asp-controller="Customer" method="post">
+            <table class="table">
+                <thead>
                 <tr>
-                    <td>@line.Product.Name</td>
-                    <td>@line.Quantity</td>
-                    <td>@line.Product.Price</td>
-                    <td>
-                        <form asp-action="@Model.RemoveLine()" asp-controller="Customer" method="post">
-                            <input type="hidden" name="productId" value="@line.Product.ProductId" />
-                            <button type="submit">Remove</button>
-                        </form>
-                    </td>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Action</th>
                 </tr>
-            }
-            <tr class="total">
-                <td colspan="3">Total:</td>
-                <td colspan="2">@Model.CalculateTotal().ToString("C")</td>
-            </tr>
-        </tbody>
-    </table>
-    <form asp-action="@Model.Clear()" asp-controller="Customer" method="post">
-        <button type="submit">Clear Cart</button>
-    </form>
+                </thead>
+                <tbody>
+                @for (int i = 0; i < Model.Lines.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.Lines[i].Product.Name</td>
+                        <td>
+                            <input type="number" name="items[@i].Quantity" value="@Model.Lines[i].Quantity" min="1" />
+                            <input type="hidden" name="items[@i].Product.ProductId" value="@Model.Lines[i].Product.ProductId" />
+                        </td>
+                        <td>@Model.Lines[i].Product.Price</td>
+                        <td>@(Model.Lines[i].Quantity * Model.Lines[i].Product.Price)</td>
+                        <td>
+                            <button class="btn btn-danger" type="submit" formaction="@Url.Action("RemoveFromCart", "Customer", new { productId = Model.Lines[i].Product.ProductId })">Remove</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <button class="btn btn-primary" type="submit" formaction="@Url.Action("UpdateCart", "Customer")">Update Cart</button>
+            <a class="btn-primary btn" asp-area="" asp-controller="Customer" asp-action="Index">Keep Shopping</a>
+            <a class="btn-primary btn" asp-area="" asp-controller="Customer" asp-action="Checkout">Go to Checkout</a>
+        </form>
+        <p>Total: @Model.Lines.Sum(item => item.Product.Price * item.Quantity)</p>
 </body>
 </html>

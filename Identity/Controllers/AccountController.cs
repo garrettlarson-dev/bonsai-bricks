@@ -12,6 +12,7 @@ namespace Identity.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private const string CartSessionKey = "Cart";
         private UserManager<AppUser> userManager;
         private SignInManager<AppUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
@@ -192,6 +193,7 @@ public async Task<IActionResult> UpdateCustomer(AppUser model)
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
+            HttpContext.Session.Remove(CartSessionKey);
             return RedirectToAction("Index", "Home");
         }
 

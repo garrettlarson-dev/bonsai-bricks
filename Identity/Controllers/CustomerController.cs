@@ -4,38 +4,255 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Identity.Models.ViewModelsTwo;
+using Identity.Models.ViewModels;
+using Identity.CustomTagHelpers;
 
 namespace Identity.Controllers
 {
     public class CustomerController : Controller
     {
         private readonly AppIdentityDbContext _context;
+        private UserManager<AppUser> userManager;
+        private const string CartSessionKey = "Cart";
 
-        public CustomerController(AppIdentityDbContext context)
+        public CustomerController(AppIdentityDbContext context, UserManager<AppUser> userMgr)
         {
             _context = context;
+            userManager = userMgr;
         }
-
-        public IActionResult Index()
+        
+        public async Task<IActionResult> Index(string category, string primaryColor, int pageNum, int pageSize=6)
         {
-            var products = _context.Products.ToList();
+            
+            var products = new ProductViewModel
+            {
+                Products = _context.Products
+                    .Skip(pageSize * (Math.Max(1, pageNum - 1))) // Skip for pagination based on selectedPageSize
+                    .Take(pageSize).Where(x => (x.Category == category ||category == null) &&
+                           (x.PrimaryColor == primaryColor || primaryColor == null)), // Take for pagination based on selectedPageSize
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _context.Products.Count()
+                }
+                
+                // CurrentLegoType = legoType,
+                // CurrentPageSize = pageSize
+            };
             return View(products);
         }
         
-        public IActionResult ProductDescription(int id)
+        public IActionResult ProductDescription(byte id, short price, string category, short numparts, string imglink)
         {
-            var product = _context.Products.AsEnumerable().FirstOrDefault(p => p.ProductId == id);
+            var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
             if (product == null)
             {
                 return NotFound(); // or handle the case where the product is not found
             }
-            return View(product);
+
+            var relatedProductIds = _context.items_rec
+                .Where(item => item.product_ID == id)
+                .Select(item => item.recommendation_1)
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_2))
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_3))
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_4))
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_5))
+                .ToList();
+
+            var relatedProducts = _context.Products.Where(p => relatedProductIds.Contains(p.ProductId)).ToList();
+
+            var productRecViewModel = new ProductRecViewModel
+            {
+                ProductsName = _context.Products,
+                ProductName2 = product,
+                RelatedProducts = relatedProducts
+            };
+
+            return View(productRecViewModel);
+        }
+
+
+        
+        
+        [HttpPost]
+        public IActionResult AddToCart(byte productId, int quantity = 1)
+        {
+            var product = _context.Products.Find(productId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            AddOrUpdateCartLine(product, quantity);
+
+            return RedirectToAction("Cart");
+        }
+
+        private void AddOrUpdateCartLine(Product product, int quantity)
+        {
+            var cart = GetCurrentCart();
+
+            var line = cart.Lines.FirstOrDefault(l => l.Product.ProductId == product.ProductId);
+            if (line != null)
+            {
+                // Update quantity if product exists
+                line.Quantity += quantity;
+            }
+            else
+            {
+                // Add new line if product does not exist in cart
+                cart.Lines.Add(new Cart.CartLine
+                {
+                    Product = product,
+                    Quantity = quantity
+                });
+            }
+
+            HttpContext.Session.SetObjectAsJson(CartSessionKey, cart);
         }
         
         public IActionResult Cart()
         {
-            return View();
+            var cart = GetCurrentCart();
+            if (cart.Lines.Count == 0)
+            {
+                return View("EmptyCart");
+            }
+            return View(cart);
         }
+        
+        private Cart GetCurrentCart()
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<Cart>(CartSessionKey);
+            if (cart == null)
+            {
+                cart = new Cart();
+                HttpContext.Session.SetObjectAsJson(CartSessionKey, cart);
+            }
+            return cart;
+        }
+        
+        [HttpPost]
+        public IActionResult UpdateCart(List<Cart.CartLine> items)
+        {
+            var cart = GetCurrentCart();
+            
+            foreach (var item in items)
+            {
+                var line = cart.Lines.FirstOrDefault(l => l.Product.ProductId == item.Product.ProductId);
+                if (line != null)
+                {
+                    line.Quantity = item.Quantity;
+                }
+            }
+
+            HttpContext.Session.SetObjectAsJson(CartSessionKey, cart);
+
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        public IActionResult RemoveFromCart(byte productId)
+        {
+            var cart = GetCurrentCart();
+
+            var line = cart.Lines.FirstOrDefault(l => l.Product.ProductId == productId);
+            if (line != null)
+            {
+                cart.Lines.Remove(line);
+            }
+
+            HttpContext.Session.SetObjectAsJson(CartSessionKey, cart);
+
+            return RedirectToAction("Cart");
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> Checkout()
+        {
+            // Check if the user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                string checkoutUrl = Url.Action("Checkout", "Customer");
+
+                // Redirect to the Login action and pass the returnUrl
+                return RedirectToAction("Login", "Account", new { returnUrl = checkoutUrl });
+            }
+
+            // If there is a logged-in user, check if they have the 'customer' role
+            // This assumes that you have role-based authorization set up and that 'UserManager' and 'RoleManager' are available through dependency injection
+            var user = await userManager.GetUserAsync(User);
+            var isInRole = await userManager.IsInRoleAsync(user, "Customer");
+
+            if (!isInRole)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            
+            var cart = GetCurrentCart();
+            if (cart.Lines.Count == 0)
+            {
+                return View("EmptyCart");
+            }
+            return View(cart);
+        }
+
+        
+        [HttpPost]
+        public async Task<IActionResult> PlaceOrder(string street, string city, string state, string zip, string country, string bank, string typeOfCard)
+        {
+            var user = await userManager.GetUserAsync(User); // Assuming you have a UserManager injected
+            var customerId = user?.CustomerId; // Replace this with your actual logic to get the CustomerId
+            var cart = GetCurrentCart();
+            
+            var order = new Order
+            {
+                TransactionId = new Random().Next(100000, 999999),
+                CustomerId = customerId,
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                DayOfWeek = DateTime.Now.DayOfWeek.ToString(),
+                Time = (byte)DateTime.Now.Hour,
+                EntryMode = "CVC",
+                Amount = (short?) cart.CalculateTotal(), // Calculate the amount based on the cart contents
+                TypeOfTransaction = "Online",
+                CountryOfTransaction = country,
+                ShippingAddress = $"{street}, {city}, {state}, {zip}, {country}",
+                Bank = bank,
+                TypeOfCard = typeOfCard,
+                Fraud = 0 // Determine how to set this value in your application logic
+            };
+
+            // Add logic to save the order and perform other necessary operations
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            HttpContext.Session.Remove(CartSessionKey);
+
+            return View("OrderConfirmation", order); // Redirect to an order confirmation page
+        }
+
+        
+        
+        [HttpGet]
+        public IActionResult OrderConfirmation()
+        {
+            // Retrieve the cart from the session
+            var cart = GetCurrentCart();
+        
+            // Here you should add the logic to process the cart and create an order.
+            // This typically involves creating an order record in the database,
+            // decrementing stock, processing payment, etc.
+
+            // After order processing:
+            // You might want to clear the cart:
+            HttpContext.Session.Remove(CartSessionKey);
+        
+            // And then redirect to an order confirmation view or another appropriate view
+            return View(); // Make sure to create this view
+        }
+        
+        
 
     }
 
