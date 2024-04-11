@@ -164,6 +164,26 @@ namespace Identity.Controllers
         }
         
         
+        
+        [HttpPost]
+        public IActionResult ConfirmOrder()
+        {
+            // Retrieve the cart from the session
+            var cart = GetCurrentCart();
+        
+            // Here you should add the logic to process the cart and create an order.
+            // This typically involves creating an order record in the database,
+            // decrementing stock, processing payment, etc.
+
+            // After order processing:
+            // You might want to clear the cart:
+            HttpContext.Session.Remove(CartSessionKey);
+        
+            // And then redirect to an order confirmation view or another appropriate view
+            return View("OrderConfirmation"); // Make sure to create this view
+        }
+        
+        
 
     }
 

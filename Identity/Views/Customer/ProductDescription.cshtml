@@ -1,5 +1,4 @@
 @model Identity.Models.ViewModelsTwo.ProductRecViewModel
-@model Identity.Models.Product
 
 <style>
     .card {
@@ -26,7 +25,7 @@
             <p>Number of Parts: @Model.ProductName2.NumParts</p>
             <!-- Add more details as needed -->
             <form asp-action="AddToCart" asp-controller="Customer" method="post">
-                <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="productId" value="@Model.ProductName2.ProductId" />
                 <input type="number" name="quantity" value="1" min="1" />
                 <button type="submit">Add to Cart</button>
             </form>
