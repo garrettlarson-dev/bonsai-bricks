@@ -1,5 +1,7 @@
-
+@using Identity.Components
+@model IQueryable<Product>
 @model Identity.Models.ViewModels.ProductViewModel
+
 <style>
   body{
     background-color: #DFE7EF;
@@ -144,33 +146,42 @@
 @* </div> *@
 
 <div class="container">
-  <h1>Products</h1>
-  <hr>
-  <br>
-  <div class="d-flex flex-wrap">
-    @foreach (var product in Model.Products)
-    {
-      <div class="col-lg-4 mb-3">
-        <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
-          <div class="card h-100" style="width: 18rem;">
-            <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
-            <div style="height: 200px; overflow: hidden;">
-              <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+    <h1>View Products</h1>
+    <div class="row">
+        <div class="col-md-3">
+            @* View Component goes here *@
+            @await Component.InvokeAsync("ProductFilter")
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex justify-content-end mb-3">
+                <a asp-controller="Admin" asp-action="AddProducts" class="btn btn-primary">Add Product</a>
             </div>
-            <div class="card-body">
-              <a class="not-special-link" href="#" onclick="editProduct(@product.ProductId)"><center>Edit Product</center></a>
-              <a href="#" onclick="deleteProduct(@product.ProductId)"><center>Delete Product</center></a>
-              <hr>
-              <center>
-                <h5 class="card-title">@product.Name</h5>
-                <h5 class="card-title">$@product.Price</h5>
-              </center>
+            <div class="d-flex flex-wrap">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="col-lg-4 mb-3">
+                        <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
+                            <div class="card h-100" style="width: 18rem;">
+                                <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
+                                <div style="height: 200px; overflow: hidden;">
+                                    <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+                                </div>
+                                <div class="card-body">
+                                    <a asp-controller="Admin" asp-action="EditProducts" asp-route-id="@product.ProductId" class="card-link product-link">Edit Product</a>
+                                    <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="card-link product-link">Delete Product</a>
+                                    <hr>
+                                    <center>
+                                        <h5 class="card-title">@product.Name</h5>
+                                        <h5 class="card-title">$@product.Price</h5>
+                                    </center>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
             </div>
-          </div>
-        </a>
-      </div>
-    }
-  </div>
+        </div>
+    </div>
 </div>
 
 @if (Model.PaginationInfo.TotalPages > 1)
@@ -195,6 +206,9 @@
     </div>
   </div>
 }
+
+
+
 
 
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Identity.Models.ViewModelsTwo;
 using Identity.Models.ViewModels;
 using Identity.CustomTagHelpers;
 
@@ -19,14 +20,15 @@ namespace Identity.Controllers
             _context = context;
         }
         
-        public async Task<IActionResult> Index(int pageNum, int pageSize=6)
+        public async Task<IActionResult> Index(string category, string primaryColor, int pageNum, int pageSize=6)
         {
             
             var products = new ProductViewModel
             {
                 Products = _context.Products
                     .Skip(pageSize * (Math.Max(1, pageNum - 1))) // Skip for pagination based on selectedPageSize
-                    .Take(pageSize), // Take for pagination based on selectedPageSize
+                    .Take(pageSize).Where(x => (x.Category == category ||category == null) &&
+                           (x.PrimaryColor == primaryColor || primaryColor == null)), // Take for pagination based on selectedPageSize
                 PaginationInfo = new PaginationInfo
                 {
                     CurrentPage = pageNum,
@@ -39,15 +41,37 @@ namespace Identity.Controllers
             };
             return View(products);
         }
-        public IActionResult ProductDescription(int id)
+        
+        public IActionResult ProductDescription(byte id, short price, string category, short numparts, string imglink)
         {
-            var product = _context.Products.AsEnumerable().FirstOrDefault(p => p.ProductId == id);
+            var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
             if (product == null)
             {
                 return NotFound(); // or handle the case where the product is not found
             }
-            return View(product);
+
+            var relatedProductIds = _context.items_rec
+                .Where(item => item.product_ID == id)
+                .Select(item => item.recommendation_1)
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_2))
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_3))
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_4))
+                .Union(_context.items_rec.Where(item => item.product_ID == id).Select(item => item.recommendation_5))
+                .ToList();
+
+            var relatedProducts = _context.Products.Where(p => relatedProductIds.Contains(p.ProductId)).ToList();
+
+            var productRecViewModel = new ProductRecViewModel
+            {
+                ProductsName = _context.Products,
+                ProductName2 = product,
+                RelatedProducts = relatedProducts
+            };
+
+            return View(productRecViewModel);
         }
+
+
         
         
         [HttpPost]

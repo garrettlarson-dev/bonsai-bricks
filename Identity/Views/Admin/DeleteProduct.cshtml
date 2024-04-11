@@ -1,0 +1,24 @@
+@model Product
+
+<h2>Delete Product</h2>
+
+<div class="d-flex justify-content-center">
+    <div class="card" style="width: 18rem;">
+        <img src="@Html.DisplayFor(model => model.ImgLink)" class="card-img-top" alt="Product Image">
+        <div class="card-body">
+            <h5 class="card-title">@Html.DisplayFor(model => model.Name)</h5>
+            <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayFor(model => model.Category)</h6>
+            <!-- Add other product details here -->
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <form asp-controller="Admin" asp-action="DeleteProduct" method="post">
+        <input type="hidden" asp-for="ProductId" />
+        <div class="form-group">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-controller="Customer" asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
