@@ -32,6 +32,11 @@ namespace Identity.Controllers
             }
             return View(product);
         }
+        
+        public IActionResult Cart()
+        {
+            return View();
+        }
 
     }
 
