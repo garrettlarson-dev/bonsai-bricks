@@ -12,14 +12,12 @@ namespace Identity.Controllers
         private UserManager<AppUser> userManager;
         private IPasswordHasher<AppUser> passwordHasher;
         private readonly AppIdentityDbContext _context;
-        private readonly RoleManager<IdentityRole> roleManager;
 
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, AppIdentityDbContext context, RoleManager<IdentityRole> roleMgr)
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, AppIdentityDbContext context)
         {
             userManager = usrMgr;
             passwordHasher = passwordHash;
             _context = context;
-            roleManager = roleMgr;
         }
         
         public IActionResult Index()
