@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Identity.Models.ViewModels;
 using Identity.CustomTagHelpers;
 
 namespace Identity.Controllers
@@ -17,13 +18,27 @@ namespace Identity.Controllers
         {
             _context = context;
         }
-
-        public IActionResult Index()
+        
+        public async Task<IActionResult> Index(int pageNum, int pageSize=6)
         {
-            var products = _context.Products.ToList();
+            
+            var products = new ProductViewModel
+            {
+                Products = _context.Products
+                    .Skip(pageSize * (Math.Max(1, pageNum - 1))) // Skip for pagination based on selectedPageSize
+                    .Take(pageSize), // Take for pagination based on selectedPageSize
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _context.Products.Count()
+                }
+                
+                // CurrentLegoType = legoType,
+                // CurrentPageSize = pageSize
+            };
             return View(products);
         }
-        
         public IActionResult ProductDescription(int id)
         {
             var product = _context.Products.AsEnumerable().FirstOrDefault(p => p.ProductId == id);
