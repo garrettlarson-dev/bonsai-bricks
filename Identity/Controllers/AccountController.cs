@@ -128,7 +128,7 @@ namespace Identity.Controllers
         }
 
         
-        [Authorize]
+        [Authorize(Roles = "Customer")]
 public async Task<IActionResult> UpdateCustomer()
 {
     var user = await userManager.GetUserAsync(User);

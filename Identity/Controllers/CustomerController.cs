@@ -113,6 +113,7 @@ namespace Identity.Controllers
             HttpContext.Session.SetObjectAsJson(CartSessionKey, cart);
         }
         
+        [Authorize(Roles = "Customer")]
         public IActionResult Cart()
         {
             var cart = GetCurrentCart();
@@ -123,6 +124,7 @@ namespace Identity.Controllers
             return View(cart);
         }
         
+        [Authorize(Roles = "Customer")]
         private Cart GetCurrentCart()
         {
             var cart = HttpContext.Session.GetObjectFromJson<Cart>(CartSessionKey);

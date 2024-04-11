@@ -24,7 +24,7 @@ namespace Identity.Controllers
             _context = context;
         }
         
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();
@@ -49,13 +49,13 @@ namespace Identity.Controllers
             return View(orders);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult AllUsers()
         {
             return View(userManager.Users);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             var lastCustomerId = await userManager.Users.MaxAsync(u => (int?)u.CustomerId) ?? 0; // If there are no users, default to 0
@@ -121,7 +121,7 @@ namespace Identity.Controllers
             return View(user);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);
