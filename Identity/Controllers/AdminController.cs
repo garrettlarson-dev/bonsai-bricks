@@ -1,4 +1,5 @@
 ﻿using Identity.Models;
+using Identity.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,13 @@ namespace Identity.Controllers
     {
         private UserManager<AppUser> userManager;
         private IPasswordHasher<AppUser> passwordHasher;
+        private readonly AppIdentityDbContext _context;
 
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash)
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, AppIdentityDbContext context)
         {
             userManager = usrMgr;
             passwordHasher = passwordHash;
+            _context = context;
         }
         
         public IActionResult Index()
@@ -90,6 +93,30 @@ namespace Identity.Controllers
             else
                 return RedirectToAction("AllUsers");
         }
+        
+        public async Task<IActionResult> Orders(int pageNum)
+        {
+            int pageSize = 100;
+        
+            var orders = new OrdersViewModel
+            {
+                Orders = _context.Orders
+                    .OrderByDescending(o => o.Date)
+                    .Skip(pageSize * (Math.Max(1, pageNum - 1))) // Skip for pagination based on selectedPageSize
+                    .Take(pageSize), // Take for pagination based on selectedPageSize
+        
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _context.Orders.Count()
+                }
+        
+            };
+            return View(orders);
+        }
+        
+        
 
         [HttpPost]
         public async Task<IActionResult> Update(string id, string email, string password, string firstName, string lastName, DateOnly birthDate, string countryOfResidence, string gender, double age)
@@ -173,5 +200,7 @@ namespace Identity.Controllers
                 ModelState.AddModelError("", "User Not Found");
             return View("AllUsers", userManager.Users);
         }
+        
+        
     }
 }
