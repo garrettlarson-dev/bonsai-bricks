@@ -1,6 +1,5 @@
 @model IEnumerable<Product>
 <style>
-  import url('https://fonts.googleapis.com/css?family=Raleway%7CRoboto&display=swap');
   body{
     background-color: #DFE7EF;
   }
@@ -123,9 +122,9 @@
     5%,95%{opacity:1;top:50px}
     15%,85%{opacity:1;top:30px}
   }
-  a{
-    z-index: -1;
-  }
+  /*a{*/
+  /*  z-index: -1;*/
+  /*}*/
 </style>
 
 @* <div class="row"> *@
@@ -158,7 +157,7 @@
                             <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
                         </div>
                         <div class="card-body">
-                            <a href="#" onclick="editProduct(@product.ProductId)"><center>Edit Product</center></a>
+                            <a class="not-special-link" href="#" onclick="editProduct(@product.ProductId)"><center>Edit Product</center></a>
                             <a href="#" onclick="deleteProduct(@product.ProductId)"><center>Delete Product</center></a>
                             <hr>
                             <center>

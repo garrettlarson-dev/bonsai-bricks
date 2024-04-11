@@ -1,7 +1,6 @@
-
-@* model IEnumerable<Identity.Models.Product> *@
-
+@using Identity.Components
 @model Identity.Models.Product
+
 <h1>Product Details - @Model.ProductId</h1>
 <div class="container">
     <h1>@Model.Name</h1>
@@ -13,9 +12,30 @@
             <h4>Price: $@Model.Price</h4>
             <p>@Model.Description</p>
             <p>Category: @Model.Category</p>
-            <p>Stock: @Model.NumParts</p>
+            <p>Number of Parts: @Model.NumParts</p>
             <!-- Add more details as needed -->
         </div>
     </div>
 </div>
 
+<vc:product-category />
+
+
+@* <div class="container"> *@
+@*     <h2>Related Products</h2> *@
+@*     <div class="row"> *@
+@*         @foreach (var product in Model) *@
+@*         { *@
+@*             <div class="col-md-3 mb-3"> *@
+@*                 <div class="card"> *@
+@*                     <img src="@product.ImgLink" class="card-img-top" alt="@product.Name"> *@
+@*                     <div class="card-body"> *@
+@*                         <h5 class="card-title">@product.Name</h5> *@
+@*                         <p>Price: $@product.Price</p> *@
+@*                         <!-- Add other product information here --> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* </div> *@

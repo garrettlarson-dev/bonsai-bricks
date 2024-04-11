@@ -25,7 +25,6 @@ namespace Identity.Controllers
         public IActionResult ProductDescription(int id)
         {
             var product = _context.Products.AsEnumerable().FirstOrDefault(p => p.ProductId == id);
-
             if (product == null)
             {
                 return NotFound(); // or handle the case where the product is not found
