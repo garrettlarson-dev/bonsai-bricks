@@ -1,0 +1,66 @@
+@model Identity.Models.ViewModels.OrdersViewModel
+
+
+<h2 class="text-center">Review Orders</h2>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer ID</th>
+                <th>Date</th>
+                <th>Day of Week</th>
+                <th>Time</th>
+                <th>Entry Mode</th>
+                <th>Amount</th>
+                <th>Type of Transaction</th>
+                <th>Country of Transaction</th>
+                <th>Shipping Address</th>
+                <th>Bank</th>
+                <th>Type of Card</th>
+                <th>Fraud</th>
+              </tr>
+            </thead>
+            <tbody>
+            @foreach (var order in Model.Orders)
+            {
+              <tr>
+                <td>@order.TransactionId</td>
+                <td>@order.CustomerId</td>
+                <td>@order.Date</td>
+                <td>@order.DayOfWeek</td>
+                <td>@order.Time</td>
+                <td>@order.EntryMode</td>
+                <td>@order.Amount</td>
+                <td>@order.TypeOfTransaction</td>
+                <td>@order.CountryOfTransaction</td>
+                <td>@order.ShippingAddress</td>
+                <td>@order.Bank</td>
+                <td>@order.TypeOfCard</td>
+                <td>@order.Fraud</td>
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
+      
+
+@if (Model.PaginationInfo.TotalPages > 1)
+{
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="pagination justify-content-center">
+          @if (Model.PaginationInfo.CurrentPage > 0)
+          {
+            <a asp-action="Orders" asp-route-pageNum="@(Model.PaginationInfo.CurrentPage - 1)" class="btn btn-primary">Previous</a>
+          }
+          @if (Model.PaginationInfo.CurrentPage < Model.PaginationInfo.TotalPages)
+          {
+            <a asp-action="Orders" asp-route-pageNum="@(Model.PaginationInfo.CurrentPage + 1)" class="btn btn-primary">Next</a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

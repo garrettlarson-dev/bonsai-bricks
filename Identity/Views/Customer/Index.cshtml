@@ -1,4 +1,5 @@
-@model IEnumerable<Product>
+
+@model Identity.Models.ViewModels.ProductViewModel
 <style>
   body{
     background-color: #DFE7EF;
@@ -143,34 +144,58 @@
 @* </div> *@
 
 <div class="container">
-    <h1>Products</h1>
-    <hr>
-    <br>
-    <div class="d-flex flex-wrap">
-        @foreach (var product in Model)
-        {
-            <div class="col-lg-4 mb-3">
-                <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
-                    <div class="card h-100" style="width: 18rem;">
-                        <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
-                        <div style="height: 200px; overflow: hidden;">
-                            <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
-                        </div>
-                        <div class="card-body">
-                            <a class="not-special-link" href="#" onclick="editProduct(@product.ProductId)"><center>Edit Product</center></a>
-                            <a href="#" onclick="deleteProduct(@product.ProductId)"><center>Delete Product</center></a>
-                            <hr>
-                            <center>
-                                <h5 class="card-title">@product.Name</h5>
-                                <h5 class="card-title">$@product.Price</h5>
-                            </center>
-                        </div>
-                    </div>
-                </a>
+  <h1>Products</h1>
+  <hr>
+  <br>
+  <div class="d-flex flex-wrap">
+    @foreach (var product in Model.Products)
+    {
+      <div class="col-lg-4 mb-3">
+        <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
+          <div class="card h-100" style="width: 18rem;">
+            <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
+            <div style="height: 200px; overflow: hidden;">
+              <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
             </div>
-        }
-    </div>
+            <div class="card-body">
+              <a class="not-special-link" href="#" onclick="editProduct(@product.ProductId)"><center>Edit Product</center></a>
+              <a href="#" onclick="deleteProduct(@product.ProductId)"><center>Delete Product</center></a>
+              <hr>
+              <center>
+                <h5 class="card-title">@product.Name</h5>
+                <h5 class="card-title">$@product.Price</h5>
+              </center>
+            </div>
+          </div>
+        </a>
+      </div>
+    }
+  </div>
 </div>
+
+@if (Model.PaginationInfo.TotalPages > 1)
+{
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="pagination justify-content-center">
+          @if (Model.PaginationInfo.CurrentPage > 0)
+          {
+            <a asp-action="Index" asp-route-pageNum="@(Model.PaginationInfo.CurrentPage - 1)" class="btn btn-primary">Previous</a>
+          }
+          @if (Model.PaginationInfo.CurrentPage < Model.PaginationInfo.TotalPages)
+          {
+            <a asp-action="Index" asp-route-pageNum="@(Model.PaginationInfo.CurrentPage + 1)" class="btn btn-primary">Next</a>
+          }
+          <a asp-controller="Customer" asp-action="Index" asp-route-pageSize="5" >5</a>
+          <a asp-controller="Customer" asp-action="Index" asp-route-pageSize="10" >10</a>
+          <a asp-controller="Customer" asp-action="Index" asp-route-pageSize="20" >20</a>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
 
 
 

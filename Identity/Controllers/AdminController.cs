@@ -1,4 +1,5 @@
 ﻿using Identity.Models;
+using Identity.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,18 +12,39 @@ namespace Identity.Controllers
         private UserManager<AppUser> userManager;
         private IPasswordHasher<AppUser> passwordHasher;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly AppIdentityDbContext _context;
 
 
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr)
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr, AppIdentityDbContext context)
         {
             userManager = usrMgr;
             passwordHasher = passwordHash;
             roleManager = roleMgr;
+            _context = context;
         }
         
         public IActionResult Index()
         {
             return View();
+        }
+        
+        public async Task<IActionResult> Orders(int pageNum)
+        {
+            int pageSize = 100;
+            var orders = new OrdersViewModel
+            {
+                Orders = _context.Orders
+                    .OrderByDescending(o => o.Date)
+                    .Skip(pageSize * (Math.Max(1, pageNum - 1))) // Skip for pagination based on selectedPageSize
+                    .Take(pageSize), // Take for pagination based on selectedPageSize
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _context.Orders.Count()
+                }
+            };
+            return View(orders);
         }
 
         public IActionResult AllUsers()
