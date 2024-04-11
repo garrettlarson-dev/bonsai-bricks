@@ -1,0 +1,21 @@
+
+@* model IEnumerable<Identity.Models.Product> *@
+
+@model Identity.Models.Product
+<h1>Product Details - @Model.ProductId</h1>
+<div class="container">
+    <h1>@Model.Name</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ImgLink" class="img-fluid" alt="@Model.Name">
+        </div>
+        <div class="col-md-6">
+            <h4>Price: $@Model.Price</h4>
+            <p>@Model.Description</p>
+            <p>Category: @Model.Category</p>
+            <p>Stock: @Model.NumParts</p>
+            <!-- Add more details as needed -->
+        </div>
+    </div>
+</div>
+
