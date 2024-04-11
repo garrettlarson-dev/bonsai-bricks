@@ -66,3 +66,23 @@ Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.resources 2.dll
 Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.CSharp.Workspaces.resources 2.dll
 Identity/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.CSharp.resources 2.dll
 .idea/.idea.Identity/.idea/vcs.xml
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/coreml_provider_factory.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/cpu_provider_factory.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/onnxruntime_c_api.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/onnxruntime_cxx_api.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/onnxruntime_cxx_inline.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/onnxruntime_float16.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/onnxruntime_run_options_config_keys.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Headers/onnxruntime_session_options_config_keys.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/Info.plist
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64/onnxruntime.framework/onnxruntime
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/coreml_provider_factory.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/cpu_provider_factory.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/onnxruntime_c_api.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/onnxruntime_cxx_api.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/onnxruntime_cxx_inline.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/onnxruntime_float16.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/onnxruntime_run_options_config_keys.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Headers/onnxruntime_session_options_config_keys.h
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/Info.plist
+Identity/bin/Debug/net8.0/runtimes/ios/native/onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime
