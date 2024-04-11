@@ -1,6 +1,7 @@
 ﻿using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Controllers
@@ -34,11 +35,12 @@ namespace Identity.Controllers
             var lastCustomerId = await userManager.Users.MaxAsync(u => (int?)u.CustomerId) ?? 0; // If there are no users, default to 0
             // Use a ViewBag or ViewData to pass the last CustomerId to the view.
             ViewBag.LastCustomerId = lastCustomerId + 1; // Increment by 1 to get the next ID
+            ViewBag.RoleList = new SelectList(await roleManager.Roles.ToListAsync(), "Name", "Name");
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(User user, string[] Roles)
         {
             if (ModelState.IsValid)
             {
@@ -58,30 +60,34 @@ namespace Identity.Controllers
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 
-                // uncomment for email confirmation (link - https://www.yogihosting.com/aspnet-core-identity-email-confirmation/)
-                /*if (result.Succeeded)
-                {
-                    var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                    var confirmationLink = Url.Action("ConfirmEmail", "Email", new { token, email = user.Email }, Request.Scheme);
-                    EmailHelper emailHelper = new EmailHelper();
-                    bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
-
-                    if (emailResponse)
-                        return RedirectToAction("AllUsers");
-                    else
-                    {
-                        // log email failed 
-                    }
-                }*/
-                
                 if (result.Succeeded)
+                {
+                    // Assign roles to the user
+                    foreach (var roleName in Roles)
+                    {
+                        if (!await userManager.IsInRoleAsync(appUser, roleName))
+                        {
+                            var roleResult = await userManager.AddToRoleAsync(appUser, roleName);
+                            if (!roleResult.Succeeded)
+                            {
+                                // Handle error
+                                Errors(roleResult);
+                            }
+                        }
+                    }
+
+                    // Redirect or handle success
                     return RedirectToAction("AllUsers");
+                }
                 else
                 {
+                    // Handle failure
                     foreach (IdentityError error in result.Errors)
                         ModelState.AddModelError("", error.Description);
                 }
             }
+            // Repopulate roles list if there's a return to form
+            ViewBag.RoleList = new SelectList(await roleManager.Roles.ToListAsync(), "Name", "Name");
             return View(user);
         }
 

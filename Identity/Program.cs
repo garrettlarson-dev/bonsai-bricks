@@ -30,6 +30,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.Configure<IdentityOptions>(opts =>
+{
+    opts.Lockout.AllowedForNewUsers = true;
+    opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+    opts.Lockout.MaxFailedAccessAttempts = 3;
+    opts.User.RequireUniqueEmail = true;
+    opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ special characters here";
+});
+
 builder.Services.AddAuthorization(opts =>
 {
     opts.AddPolicy("AspManager", policy =>
