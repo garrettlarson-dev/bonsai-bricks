@@ -7,19 +7,19 @@ namespace Identity.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly AppIdentityDbContext _context;
         private UserManager<AppUser> userManager;
-        public HomeController(UserManager<AppUser> userMgr)
+        public HomeController(AppIdentityDbContext context, UserManager<AppUser> userMgr)
         {
+            _context = context;
             userManager = userMgr;
         }
 
         //[Authorize(Roles = "Manager")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            // AppUser user = await userManager.GetUserAsync(HttpContext.User);
-            // string message = "Hello " + user.UserName;
-            // return View((object)message);
-            return View();
+            var product = _context.Products;
+            return View(product);
         }
 
         public async Task<IActionResult> Privacy()
