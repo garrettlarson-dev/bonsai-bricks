@@ -1,0 +1,21 @@
+@* @model IQueryable<string> *@
+@* @model Identity.Components.ProductFilterViewComponent.FilterOptions *@
+
+<div class="d-grid gap-2">
+    <a class="btn btn-outline-secondary" 
+       asp-controller="Customer" 
+       asp-action="Index" 
+       asp-route-category=""
+       asp-route-pageNum=""
+       asp-route-pageSize="">All Products</a>
+    
+    @foreach (string category in Model ?? Enumerable.Empty<string>())
+    {
+        <a class="btn @(category == ViewBag.SelectedCategory ? "btn-primary" : "btn-outline-secondary")" 
+           asp-controller="Customer" 
+           asp-action="Index" 
+           asp-route-category="@category"
+           asp-route-pageNum="1" 
+           asp-route-pageSize="@ViewBag.PageSize">@category</a>
+    }
+</div>

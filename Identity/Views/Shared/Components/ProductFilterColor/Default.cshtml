@@ -1,0 +1,18 @@
+@* @model Identity.Components.ProductFilterViewComponent.FilterOptions *@
+
+<div class="d-grid gap-2">
+    <a class="btn btn-outline-secondary" 
+       asp-controller="Customer" 
+       asp-action="Index"
+       asp-route-primaryColor="">All Products</a>
+    
+    @foreach (string color in Model ?? Enumerable.Empty<string>())
+    {
+        <a class="btn @(color == ViewBag.SelectedColor ? "btn-primary" : "btn-outline-secondary")" 
+           asp-controller="Customer" 
+           asp-action="Index"
+           asp-route-primaryColor="@color" 
+           asp-route-pageNum="1" 
+           asp-route-pageSize="">@color</a>
+    }
+</div>

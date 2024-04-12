@@ -148,6 +148,35 @@
   .btn:hover {
       background-color: #FFC200;
   }
+  /* Custom styles for pagination buttons */
+  .page-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 0 4px;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid #343a40;
+      border-radius: 4px;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+      color: #343a40;
+      background-color: transparent;
+  }
+  
+  .page-btn:hover {
+      color: #fff;
+      background-color: #343a40;
+      border-color: #343a40;
+  }
+  
+  .page-button-selected {
+      color: #fff;
+      background-color: #343a40;
+      border-color: #343a40;
+  }
+
 
   /*a{*/
   /*  z-index: -1;*/
@@ -172,12 +201,25 @@
 <div class="container">
 <h1>View Products</h1>
 <div class="container text-center">
-  <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-category="@Model.CurrentCategory"></div>
+  <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="page-btn" page-class-normal="btn-outline-dark" page-class-selected="page-button-selected" page-url-category="@Model.CurrentCategory" page-url-primaryColor="@Model.CurrentColor" page-url-pageSize="@Model.CurrentPageSize"></div>
 </div>
+<div class="d-flex justify-content-center">
+    <div class="page-size-container">
+        <span>Products per page: </span>
+        <a href="/Customer/SetPageSize?pageSize=5" class="btn btn-outline-dark">5</a>
+        <a href="/Customer/SetPageSize?pageSize=10" class="btn btn-outline-dark">10</a>
+        <a href="/Customer/SetPageSize?pageSize=20" class="btn btn-outline-dark">20</a>
+    </div>
+</div>
+
     <div class="row">
-        <div class="col-md-3">
-            @* View Component goes here *@
-            @await Component.InvokeAsync("ProductFilter")
+        <div class="col-md-3" style="margin-bottom: 100px;">
+          @* View Component goes here *@
+          <h2>Filter By Category</h2>
+            @await Component.InvokeAsync("ProductFilterCategory")
+          <br/><br/><br/>
+          <h2>Filter By Color</h2>
+            @await Component.InvokeAsync("ProductFilterColor")
         </div>
         <div class="col-md-9">
             <div class="d-flex justify-content-end mb-3">

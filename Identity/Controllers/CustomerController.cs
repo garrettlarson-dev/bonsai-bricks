@@ -22,15 +22,17 @@ namespace Identity.Controllers
             userManager = userMgr;
         }
 
-        public IActionResult Index(string? category, string? primaryColor, int pageNum = 1)
+        public IActionResult Index(string category, string primaryColor, int pageNum = 1)
         {
-            int pageSize = 5;
+            ViewBag.SelectedCategory = category;
+            ViewBag.SelectedColor = primaryColor;
+
+            int pageSize = HttpContext.Session.GetInt32("PageSize") ?? 10; // Default page size is 10
 
             var blah = new ProductListViewModel()
             {
-
                 Products = _context.Products
-                    .Where(x => (x.Category == category ||category == null) &&
+                    .Where(x => (x.Category == category || category == null) &&
                                 (x.PrimaryColor == primaryColor || primaryColor == null))
                     .OrderBy(x => x.Category)
                     .Skip((pageNum - 1) * pageSize)
@@ -40,14 +42,26 @@ namespace Identity.Controllers
                 {
                     CurrentPage = pageNum,
                     ItemsPerPage = pageSize,
-                    TotalItems = category == null ? _context.Products.Count() : _context.Products.Where(x => x.Category == category).Count()
+                    TotalItems = (category == null && primaryColor == null) ? _context.Products.Count() : _context.Products.Where(x => (x.Category == category || category == null) && (x.PrimaryColor == primaryColor || primaryColor == null)).Count()
                 },
-                
+
                 CurrentCategory = category,
-                CurrentColor = primaryColor
+                CurrentColor = primaryColor,
+                CurrentPageSize = pageSize
             };
+
             return View(blah);
         }
+
+
+        [HttpGet]
+        public IActionResult SetPageSize(int pageSize)
+        {
+            HttpContext.Session.SetInt32("PageSize", pageSize);
+            return RedirectToAction("Index");
+        }
+
+
         
         public IActionResult ProductDescription(byte id, short price, string category, short numparts, string imglink)
         {
