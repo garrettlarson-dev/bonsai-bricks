@@ -278,36 +278,36 @@ public async Task<IActionResult> UpdateCustomer(AppUser model)
         }
 
         [AllowAnonymous]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+public IActionResult ForgotPassword()
+{
+    return View();
+}
 
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword([Required] string email)
-        {
-            if (!ModelState.IsValid)
-                return View(email);
+[HttpPost]
+[AllowAnonymous]
+public async Task<IActionResult> ForgotPassword([Required] string email)
+{
+    if (!ModelState.IsValid)
+        return View(email);
 
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-                return RedirectToAction(nameof(ForgotPasswordConfirmation));
+    var user = await userManager.FindByEmailAsync(email);
+    if (user == null)
+        return RedirectToAction(nameof(ForgotPasswordConfirmation));
 
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            var link = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+    var link = Url.Action("ResetPassword", "Account", new { email = user.Email }, Request.Scheme);
 
-            EmailHelper emailHelper = new EmailHelper();
-            bool emailResponse = emailHelper.SendEmailPasswordReset(user.Email, link);
+    EmailHelper emailHelper = new EmailHelper();
+    bool emailResponse = emailHelper.SendEmailPasswordReset(user.Email, link);
 
-            if (emailResponse)
-                return RedirectToAction("ForgotPasswordConfirmation");
-            else
-            {
-                // log email failed 
-            }
-            return View(email);
-        }
+    if (emailResponse)
+        return RedirectToAction("ForgotPasswordConfirmation");
+    else
+    {
+        // log email failed 
+    }
+    return View(email);
+}
+
 
         [AllowAnonymous]
         public IActionResult ForgotPasswordConfirmation()
@@ -316,9 +316,9 @@ public async Task<IActionResult> UpdateCustomer(AppUser model)
         }
 
         [AllowAnonymous]
-        public IActionResult ResetPassword(string token, string email)
+        public IActionResult ResetPassword(string email)
         {
-            var model = new ResetPassword { Token = token, Email = email };
+            var model = new ResetPassword { Email = email };
             return View(model);
         }
 
@@ -333,7 +333,11 @@ public async Task<IActionResult> UpdateCustomer(AppUser model)
             if (user == null)
                 RedirectToAction("ResetPasswordConfirmation");
 
-            var resetPassResult = await userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
+            // Generate a password reset token (optional in this case)
+            // var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Reset the password without using the token
+            var resetPassResult = await userManager.ResetPasswordAsync(user, null, resetPassword.Password);
             if (!resetPassResult.Succeeded)
             {
                 foreach (var error in resetPassResult.Errors)
@@ -343,6 +347,7 @@ public async Task<IActionResult> UpdateCustomer(AppUser model)
 
             return RedirectToAction("ResetPasswordConfirmation");
         }
+
 
         public IActionResult ResetPasswordConfirmation()
         {
