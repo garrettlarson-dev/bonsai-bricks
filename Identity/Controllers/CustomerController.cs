@@ -180,6 +180,11 @@ namespace Identity.Controllers
             return RedirectToAction("Cart");
         }
         
+        public IActionResult LegoBuilder()
+        {
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Checkout()
         {
@@ -209,6 +214,7 @@ namespace Identity.Controllers
             }
             return View(cart);
         }
+        
 
         
         [HttpPost]
@@ -304,7 +310,7 @@ namespace Identity.Controllers
         
             // And then redirect to an order confirmation view or another appropriate view
             return View(); // Make sure to create this view
-        }       
+        }
 
     }
 
