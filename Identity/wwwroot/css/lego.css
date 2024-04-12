@@ -14,14 +14,15 @@ body {
     display: flex;
     height: 100vh;
     font-family: Montserrat, sans-serif;
+    justify-content: center;
+    align-items: center;
 }
 
 .minifigure {
     position: relative;
-    width: 300px;
-    height: 485px;
-    margin: auto;
-    perspective: 200;
+    width: 150px; /* Adjusted width */
+    height: 200px; /* Adjusted height */
+    perspective: 100;
     transform-style: preserve-3d;
     transition: transform 400ms;
 }
