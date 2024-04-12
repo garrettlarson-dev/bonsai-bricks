@@ -129,59 +129,59 @@ namespace Identity.Controllers
 
         
         [Authorize(Roles = "Customer")]
-public async Task<IActionResult> UpdateCustomer()
-{
-    var user = await userManager.GetUserAsync(User);
-    if (user != null)
-        return View(user);
-    else
-        return NotFound(); // Handle the case where the user is not found
-}
-
-[HttpPost]
-public async Task<IActionResult> UpdateCustomer(AppUser model)
-{
-    if (!ModelState.IsValid)
-    {
-        return View(model);
-    }
-
-    var user = await userManager.GetUserAsync(User);
-    if (user == null)
-    {
-        return NotFound(); // Handle the case where the user is not found
-    }
-
-    // Update user properties
-    user.Email = model.Email;
-    user.FirstName = model.FirstName;
-    user.LastName = model.LastName;
-    user.CountryOfResidence = model.CountryOfResidence;
-    user.BirthDate = model.BirthDate;
-    user.Gender = model.Gender;
-    user.Age = model.Age;
-
-    // Update the user's password if provided
-    if (!string.IsNullOrEmpty(model.PasswordHash))
-    {
-        user.PasswordHash = passwordHasher.HashPassword(user, model.PasswordHash);
-    }
-
-    var result = await userManager.UpdateAsync(user);
-    if (result.Succeeded)
-    {
-        return RedirectToAction("Index", "Home"); // Redirect to home page after successful update
-    }
-    else
-    {
-        // Handle the case where the update fails
-        foreach (var error in result.Errors)
+        public async Task<IActionResult> UpdateCustomer()
         {
-            ModelState.AddModelError("", error.Description);
+            var user = await userManager.GetUserAsync(User);
+            if (user != null)
+                return View(user);
+            else
+                return NotFound(); // Handle the case where the user is not found
         }
-        return View(model);
-    }
-}
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCustomer(AppUser model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(); // Handle the case where the user is not found
+            }
+
+            // Update user properties
+            user.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.CountryOfResidence = model.CountryOfResidence;
+            user.BirthDate = model.BirthDate;
+            user.Gender = model.Gender;
+            user.Age = model.Age;
+
+            // Update the user's password if provided
+            if (!string.IsNullOrEmpty(model.PasswordHash))
+            {
+                user.PasswordHash = passwordHasher.HashPassword(user, model.PasswordHash);
+            }
+
+            var result = await userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home"); // Redirect to home page after successful update
+            }
+            else
+            {
+                // Handle the case where the update fails
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View(model);
+            }
+        }
 
         
         private void Errors(IdentityResult result)
@@ -198,50 +198,68 @@ public async Task<IActionResult> UpdateCustomer(AppUser model)
         }
 
         public IActionResult AccessDenied()
-        {
-            return View();
-        }
+           {
+               return View();
+           }
 
-        /*[AllowAnonymous]
-        public IActionResult GoogleLogin()
-        {
-            string redirectUrl = Url.Action("GoogleResponse", "Account");
-            var properties = signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
-            return new ChallengeResult("Google", properties);
-        }
+           [AllowAnonymous]
+           public IActionResult GoogleLogin()
+           {
+               string redirectUrl = Url.Action("GoogleResponse", "Account");
+               var properties = signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+               return new ChallengeResult("Google", properties);
+           }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> GoogleResponse()
-        {
-            ExternalLoginInfo info = await signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-                return RedirectToAction(nameof(Login));
+           [AllowAnonymous]
+           public async Task<IActionResult> GoogleResponse()
+           {
+               ExternalLoginInfo info = await signInManager.GetExternalLoginInfoAsync();
+               if (info == null)
+                   return RedirectToAction(nameof(Login));
 
-            var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
-            string[] userInfo = { info.Principal.FindFirst(ClaimTypes.Name).Value, info.Principal.FindFirst(ClaimTypes.Email).Value };
-            if (result.Succeeded)
-                return View(userInfo);
-            else
-            {
-                AppUser user = new AppUser
-                {
-                    Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
-                    UserName = info.Principal.FindFirst(ClaimTypes.Email).Value
-                };
+               var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+               string[] userInfo = { info.Principal.FindFirst(ClaimTypes.Name).Value, info.Principal.FindFirst(ClaimTypes.Email).Value };
+               
+               var lastCustomerId = await userManager.Users.MaxAsync(u => (int?)u.CustomerId) ?? 0;
+               
+               if (result.Succeeded)
+                   return RedirectToAction("Index", "Home");
+               else
+               {
+                   AppUser user = new AppUser
+                   {
+                       Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
+                       UserName = info.Principal.FindFirst(ClaimTypes.Email).Value,
+                       FirstName = userInfo[0].Split(' ')[0],
+                       LastName = userInfo[0].Split(' ')[1],
+                       CustomerId = lastCustomerId + 1,
+                       BirthDate = new DateOnly(2000, 1, 1),
+                       CountryOfResidence = "United States",
+                       Age = 24,
+                       Gender = "Other",
+                       EmailConfirmed = true,
+                       PhoneNumberConfirmed = true,
+                       TwoFactorEnabled = false,
+                       LockoutEnabled = false,
+                       AccessFailedCount = 0,
+                   };
 
-                IdentityResult identResult = await userManager.CreateAsync(user);
-                if (identResult.Succeeded)
-                {
-                    identResult = await userManager.AddLoginAsync(user, info);
-                    if (identResult.Succeeded)
-                    {
-                        await signInManager.SignInAsync(user, false);
-                        return View(userInfo);
-                    }
-                }
-                return AccessDenied();
-            }
-        }*/
+                   IdentityResult identResult = await userManager.CreateAsync(user);
+                   if (identResult.Succeeded)
+                   {
+                       // Assign the role "Customer" to the user
+                       await userManager.AddToRoleAsync(user, "Customer");
+                       
+                       identResult = await userManager.AddLoginAsync(user, info);
+                       if (identResult.Succeeded)
+                       {
+                           await signInManager.SignInAsync(user, false);
+                           return RedirectToAction("Index", "Home");
+                       }
+                   }
+                   return AccessDenied();
+               }
+           }
 
         [AllowAnonymous]
         public async Task<IActionResult> LoginTwoStep(string email, string returnUrl)
