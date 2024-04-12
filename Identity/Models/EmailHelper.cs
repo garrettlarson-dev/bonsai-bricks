@@ -7,7 +7,7 @@ namespace Identity.Models
         public bool SendEmailTwoFactorCode(string userEmail, string code)
         {
             MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress("care@yogihosting.com");
+            mailMessage.From = new MailAddress("noreply@legobrickwell.com");
             mailMessage.To.Add(new MailAddress(userEmail));
 
             mailMessage.Subject = "Two Factor Code";

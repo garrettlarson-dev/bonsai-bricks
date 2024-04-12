@@ -31,5 +31,9 @@ namespace Identity.Controllers
         {
             return View(AboutMe);
         }
+        public IActionResult Error()
+        {
+            return View();
+        }
     }
 }
