@@ -1,0 +1,51 @@
+@model Order
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <!-- Add other necessary meta tags and CSS links -->
+</head>
+<body>
+<h1>Whoops! We need to review your order.</h1>
+<h2>We'll be hearing from you shortly</h2>
+<div class="card-body">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer ID</th>
+            <th>Date</th>
+            <th>Day of Week</th>
+            <th>Time</th>
+            <th>Entry Mode</th>
+            <th>Amount</th>
+            <th>Type of Transaction</th>
+            <th>Country of Transaction</th>
+            <th>Shipping Address</th>
+            <th>Bank</th>
+            <th>Type of Card</th>
+            <th>Fraud</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@Model.TransactionId</td>
+            <td>@Model.CustomerId</td>
+            <td>@Model.Date</td>
+            <td>@Model.DayOfWeek</td>
+            <td>@Model.Time</td>
+            <td>@Model.EntryMode</td>
+            <td>@Model.Amount</td>
+            <td>@Model.TypeOfTransaction</td>
+            <td>@Model.CountryOfTransaction</td>
+            <td>@Model.ShippingAddress</td>
+            <td>@Model.Bank</td>
+            <td>@Model.TypeOfCard</td>
+            <td>@Model.Fraud</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
