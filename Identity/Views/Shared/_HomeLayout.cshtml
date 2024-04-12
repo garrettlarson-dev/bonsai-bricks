@@ -38,7 +38,7 @@
 </head>
 
 <body>
-<div class="navi">
+<div class="navi animate-navi">
     <label class="toggleMenu" for="show-menu"><span class="title">Menu</span></label>
     <input id="show-menu" type="checkbox"/>
     <ul class="list">
@@ -46,9 +46,6 @@
         {
             @if (userRoles.Contains("Admin"))
             {
-                <li class="listItem">
-                    <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                </li>
                 <li class="listItem">
                     <a asp-area="" asp-controller="Admin" asp-action="Index">Admin Tools</a>
                 </li>
@@ -284,7 +281,7 @@
     @*     </div> *@
     @* </nav> *@
 
-<div class="container mt-5">
+<div class="main-content">
     <partial name="_CookieConsentPartial"/>
     <main role="main">
         @RenderBody()

@@ -20,7 +20,7 @@
         Remember me? <input type="checkbox" asp-for="Remember" />
     </div>
     <button class="btn btn-primary" type="submit">Log In</button>
-    <a class="btn btn-secondary" asp-action="ForgotPassword">Forgot Password</a>
+    @* <a class="btn btn-secondary" asp-action="ForgotPassword">Forgot Password</a> *@
     <a class="btn btn-secondary" asp-area="" asp-controller="Account" asp-action="Register" asp-route-ReturnUrl="/">Register</a>
-    <a class="btn btn-info" asp-action="GoogleLogin">Log In With Google</a>
+    <a class="btn btn-secondary" asp-action="GoogleLogin">Log In With Google</a>
 </form>

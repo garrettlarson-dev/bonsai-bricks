@@ -58,6 +58,10 @@ namespace Identity.Controllers
                             return RedirectToAction("Index", "Home");
                         }
                     }
+                    if (result.RequiresTwoFactor)
+                    {
+                        return RedirectToAction("LoginTwoStep", new { appUser.Email, login.ReturnUrl });
+                    }
                     // If login fails, show error message
                     ModelState.AddModelError(nameof(login.Email), "Login Failed: Invalid Email or password");
                 }
@@ -270,8 +274,17 @@ namespace Identity.Controllers
 
             EmailHelper emailHelper = new EmailHelper();
             bool emailResponse = emailHelper.SendEmailTwoFactorCode(user.Email, token);
-
-            return View();
+            
+            if (emailResponse)
+            {
+                // Handle success
+                return View();
+            }
+            else
+            {
+                // Handle failure
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpPost]

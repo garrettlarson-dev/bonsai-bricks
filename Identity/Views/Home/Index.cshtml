@@ -4,193 +4,61 @@
 @* @inject SignInManager<IdentityUser> SignInManager *@
 @* @inject UserManager<IdentityUser> UserManager *@
 
-<style>
-  body{
-    background-color: #DFE7EF;
-  }
-  .container{
-    margin-top: 50px;
-  }
-  h1, .card-title, a, #toast{
-    font-family: 'Roboto', sans-serif;
-  }
-  h1{
-    color: #5C7CFA;
-  }
-.card {
-    box-shadow: 0px 15px 35px -5px rgba(50, 88, 130, 0.32);
-    border-radius: 15px;
-    transition: transform .2s;
-    width: 14rem; /* Adjust the width as needed */
-    height: 30rem; /* Set a fixed height for the cards */
-    margin-bottom: 20px; /* Add some margin between the cards */
-    padding: 10px; /* Add padding inside the cards */
+@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
 }
 
-/* Adjust the margin of the card container */
-.col-lg-4.mb-3 {
-    margin-bottom: 20px;
-}
 
-/* Adjust the padding of the card container */
-.d-flex.flex-wrap {
-    padding: 10px; /* Add padding around the cards */
-}
-  .card-body{
-    padding: 10px;
-    margin-top: -50px;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease-in-out;
-  }
-  .heart{
-    color: #989898;
-    margin-top: 15px;
-    margin-left: 230px;
-    font-size: 30px;
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 30px;
-    padding: 0px;
-    text-align: center;
-    cursor: pointer;
-  }
-  .heart-active{
-    color: #C50707;
-  }
-  .heart:hover{
-    color: red;
-    background-color: #F9F9F9;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease-in-out;
-  }
-  .card-body a{
-    visibility: hidden;
-  }
-  .card:hover > .card-body{
-    margin-top: -0px;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease;
-  }
-  .card:hover{
-    transform: scale(1.02);
-  }
-  .card:hover > .card-body > a{
-    visibility: visible;
-  }
-  .first-image{
-    width: 100%;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-  }
-  .cart, .wish{
-    padding: 5px;
-    width: 50px;
-    height: 50px;
-    margin-left: -24px;
-    margin-top: 0px;
-    margin-right: 3px;
-    background-color: #fff;
-    color: #5C7CFA;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    text-align: center;
-    -ms-display: flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .wish{
-    color: #C50707;
-  }
-  #toast, #toast-cart{
-    padding: 10px;
-    padding-left: 5px;
-    position: fixed;
-    width: 230px;
-    height: 50px;
-    top: 0;
-    left: 80%;
-    transform:translate(-50%);
-    background-color: #EFF2FF;
-    color: #76777E;
-    padding: 1px;
-    border-radius: 8px;
-    text-align:center;
-    z-index: 1;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    visibility: hidden;
-    opacity: 0;
-    -ms-display: flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-  #toast.show, #toast-cart.show{
-    visibility:visible;
-    animation:fadeInOut 3s;
-  }
-  keyframes fadeInOut{
-    5%,95%{opacity:1;top:50px}
-    15%,85%{opacity:1;top:30px}
-  }
-  /* Button styles */
-  .btnspecial {
-      display: inline-block;
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-  }
-  
-  /* Yellow button */
-  .btn-yellowspecial {
-      background-color: #FFD700;
-      color: #000000;
-  }
-  
-  /* Hover effect */
-  .btn:hover {
-      background-color: #FFC200;
-  }
+<h1 class="hidden-logo">Lego Brickwell Store</h1>
+<div class="home-container">
+        <div class="lego-section red">
+            <ul class="saleList">
+                    <a asp-area="" class="blank-link" asp-controller="Customer" asp-action="Index">
+<h2 class="bottom-right white-text">Products</h2>    </a>
 
-  /*a{*/
-  /*  z-index: -1;*/
-  /*}*/
-</style>
+            </ul>
+        </div>
+         <div class="lego-section gray">
+            <ul class="shopList">
+                    <a asp-area="" class="blank-link" asp-controller="Customer" asp-action="Cart">
+<h2 class="bottom-right white-text">Cart</h2>    </a>
 
-@* <div class="row"> *@
-@*     @foreach (var product in Model) *@
-@*     { *@
-@*         <div class="col-md-3 mb-3"> *@
-@*             <div class="card"> *@
-@*                 <img src="@product.ImgLink" class="card-img-top" alt="@product.Name"> *@
-@*                 <div class="card-body"> *@
-@*                     <h5 class="card-title">@product.Name</h5> *@
-@*                     <!-- Add other product information here --> *@
-@*                 </div> *@
-@*             </div> *@
-@*         </div> *@
-@*     } *@
-@* </div> *@
+            </ul>
+        </div>
+    <div class="white"></div>
+    <div class="yellow"></div>
+    <div class="navi-white">
+        <h2 class="top-left">Lego Brickwell Store</h2>
+    </div>
 
+    <div class="yellow_wide"></div>
+        <div class="lego-section blue_wide">
+                <a asp-area="" class="blank-link" asp-controller="Home" asp-action="AboutMe">
+<h2 class="top-left white-text">About</h2>    </a>
+
+        </div>
+        <div class="lego-section white_wide">
+               <a asp-area="" class="blank-link" asp-controller="Home" asp-action="Privacy">
+ <h2 class="top-left">Privacy</h2>    </a>
+
+        </div>
+        <div class="lego-section black_wide">
+                <a href="#recommendations" class="blank-link">
+<h2 class="top-left white-text">Recommended For You</h2>    </a> 
+
+        </div>
+    
+</div>
+
+@* <div class="gray"></div> *@
+@* <div class="white"></div> *@
+@* <div class="yellow"></div> *@
+<div class="container-fluid" id="recommendations">
     @if (User.IsInRole("Customer"))
         // && user.Id == "123456789"
     {
-        <h1>Recommended Products For You, Spencer</h1>
         <div class="row mt-5">
+            <h1 class="mb-3">Recommended Products For You, Spencer</h1>
             <div class="col-md-12">
                 <div class="d-flex flex-wrap justify-content-around">
                     @foreach (var product in Model.Where(p => p.ProductId == 19 || p.ProductId == 20 || p.ProductId == 22 || p.ProductId == 13 || p.ProductId == 24))
@@ -203,11 +71,11 @@
                                         <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
                                     </div>
                                     <div class="card-body">
-                                        <hr>
-                                        <center>
+                                        
+                                        
                                             <h5 class="card-title">@product.Name</h5>
                                             <h5 class="card-title">$@product.Price</h5>
-                                        </center>
+                                       
                                     </div>
                                 </div>
                             </a>
@@ -218,72 +86,67 @@
         </div>
     }
 
-
-<div class="container">
-    <h1>Highest Rated Products</h1>
-    <div class="container text-center">
-    </div>
     <div class="row">
+        <h1 class="mb-3">Highest Rated Products</h1>
         <div class="col-md-12">
             <div class="d-flex flex-wrap justify-content-around">
                 @foreach (var product in Model.Where(p => p.ProductId == 27 || p.ProductId == 33 || p.ProductId == 34 || p.ProductId == 37 || p.ProductId == 24))
                 {
                     <div class="col-lg-2 mb-3">
-                        
+
                         <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
 
-                        <div class="card h-100" style="width: 18rem;">
-                            <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
-                            <div style="height: 200px; overflow: hidden;">
-                                <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+                            <div class="card h-100" style="width: 18rem;">
+                                <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
+                                <div style="height: 200px; overflow: hidden;">
+                                    <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+                                </div>
+                                <div class="card-body">
+                                    
+                                    
+                                        <h5 class="card-title">@product.Name</h5>
+                                        <h5 class="card-title">$@product.Price</h5>
+                                   
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <hr>
-                                <center>
-                                    <h5 class="card-title">@product.Name</h5>
-                                    <h5 class="card-title">$@product.Price</h5>
-                                </center>
-                            </div>
-                        </div>
                         </a>
                     </div>
                 }
             </div>
         </div>
     </div>
-</div>
 
-<h1>Most Frequently Bought</h1>
-<div class="row mt-5">
-    <div class="col-md-12">
-        <div class="d-flex flex-wrap justify-content-around">
-            @foreach (var product in Model.Where(p => p.ProductId == 23 || p.ProductId == 19 || p.ProductId == 21 || p.ProductId == 22 || p.ProductId == 20))
-            {
-                <div class="col-lg-2 mb-3">
-                    
-                    <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
+    <div class="row mt-5">
+        <h1 class="mb-3">Most Frequently Bought</h1>
+        <div class="col-md-12">
+            <div class="d-flex flex-wrap justify-content-around">
+                @foreach (var product in Model.Where(p => p.ProductId == 23 || p.ProductId == 19 || p.ProductId == 21 || p.ProductId == 22 || p.ProductId == 20))
+                {
+                    <div class="col-lg-2 mb-3">
 
-                        <div class="card h-100" style="width: 18rem;">
-                            <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
-                            <div style="height: 200px; overflow: hidden;">
-                                <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+                        <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
+
+                            <div class="card h-100" style="width: 18rem;">
+                                <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
+                                <div style="height: 200px; overflow: hidden;">
+                                    <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+                                </div>
+                                <div class="card-body">
+                                    
+                                    
+                                        <h5 class="card-title">@product.Name</h5>
+                                        <h5 class="card-title">$@product.Price</h5>
+                                   
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <hr>
-                                <center>
-                                    <h5 class="card-title">@product.Name</h5>
-                                    <h5 class="card-title">$@product.Price</h5>
-                                </center>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            }
+                        </a>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-</div>
 
-<div class="text-center mt-5">
-    <a href="~/Customer/Index" class="btn btn-primary btn-lg">See All Products</a>
+    <div class="text-center mt-5 ">
+        <a href="~/Customer/Index" class="btn btn-primary btn-lg mb-5">See All Products</a>
+    </div>
 </div>
-<br/><br/><br/><br/><br/><br/>

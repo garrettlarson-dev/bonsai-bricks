@@ -5,149 +5,7 @@
   body{
     background-color: #DFE7EF;
   }
-  .container{
-    margin-top: 50px;
-  }
-  h1, .card-title, a, #toast{
-    font-family: 'Roboto', sans-serif;
-  }
-  h1{
-    color: #5C7CFA;
-  }
-  .card{
-    box-shadow: 0px 15px 35px -5px rgba(50, 88, 130, 0.32);
-    border-radius: 15px;
-    transition: transform .2s;
-  }
-  .card-body{
-    padding: 10px;
-    margin-top: -50px;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease-in-out;
-  }
-  .heart{
-    color: #989898;
-    margin-top: 15px;
-    margin-left: 230px;
-    font-size: 30px;
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 30px;
-    padding: 0px;
-    text-align: center;
-    cursor: pointer;
-  }
-  .heart-active{
-    color: #C50707;
-  }
-  .heart:hover{
-    color: red;
-    background-color: #F9F9F9;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease-in-out;
-  }
-  .card-body a{
-    visibility: hidden;
-  }
-  .card:hover > .card-body{
-    margin-top: -0px;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease;
-  }
-  .card:hover{
-    transform: scale(1.02);
-  }
-  .card:hover > .card-body > a{
-    visibility: visible;
-  }
-  .first-image{
-    width: 100%;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-  }
-  .cart, .wish{
-    padding: 5px;
-    width: 50px;
-    height: 50px;
-    margin-left: -24px;
-    margin-top: 0px;
-    margin-right: 3px;
-    background-color: #fff;
-    color: #5C7CFA;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    text-align: center;
-    -ms-display: flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .wish{
-    color: #C50707;
-  }
-  #toast, #toast-cart{
-    padding: 10px;
-    padding-left: 5px;
-    position: fixed;
-    width: 230px;
-    height: 50px;
-    top: 0;
-    left: 80%;
-    transform:translate(-50%);
-    background-color: #EFF2FF;
-    color: #76777E;
-    padding: 1px;
-    border-radius: 8px;
-    text-align:center;
-    z-index: 1;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    visibility: hidden;
-    opacity: 0;
-    -ms-display: flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-  #toast.show, #toast-cart.show{
-    visibility:visible;
-    animation:fadeInOut 3s;
-  }
-  keyframes fadeInOut{
-    5%,95%{opacity:1;top:50px}
-    15%,85%{opacity:1;top:30px}
-  }
-  /* Button styles */
-  .btnspecial {
-      display: inline-block;
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-  }
   
-  /* Yellow button */
-  .btn-yellowspecial {
-      background-color: #FFD700;
-      color: #000000;
-  }
-  
-  /* Hover effect */
-  .btn:hover {
-      background-color: #FFC200;
-  }
   /* Custom styles for pagination buttons */
   .page-btn {
       display: inline-block;
@@ -198,12 +56,12 @@
 @*     } *@
 @* </div> *@
 
-<div class="container">
+<div class="container mt-5">
 <h1>View Products</h1>
-<div class="container text-center">
+<div class="d-flex justify-content-end mt-3 mb-3">
   <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="page-btn" page-class-normal="btn-outline-dark" page-class-selected="page-button-selected" page-url-category="@Model.CurrentCategory" page-url-primaryColor="@Model.CurrentColor" page-url-pageSize="@Model.CurrentPageSize"></div>
 </div>
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-end mt-3 mb-3">
     <div class="page-size-container">
         <span>Products per page: </span>
         <a href="/Customer/SetPageSize?pageSize=5" class="btn btn-outline-dark">5</a>
@@ -228,40 +86,42 @@
                                         <a asp-controller="Admin" asp-action="AddProducts" class="btn btn-primary">Add Product</a>
                                       }
           </div>
-            <div class="d-flex flex-wrap">
+          <div class="d-flex flex-wrap">
               @foreach (var product in Model.Products)
               {
-                <div class="col-lg-4 mb-3">
-                  <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
-                    <div class="card h-100" style="width: 18rem;">
-                      <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
-                      <div style="height: 200px; overflow: hidden;">
-                        <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
-                      </div>
-                      <div class="card-body">
-                          @if (User.IsInRole("Admin"))
-                          {
-                              <a asp-controller="Admin" asp-action="EditProducts" asp-route-id="@product.ProductId" class="card-link product-link">Edit Product</a>
-                              <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="card-link product-link">Delete Product</a>
-                          }
-                          else if (User.IsInRole("Customer"))
-                          {
-                              <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="btnspecial btn-yellowspecial">Add to Cart</a>
-                          }
+                  <div class="col-lg-4 mb-3">
+                      <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="card-link product-link">
+                          <div class="card h-100" style="width: 18rem;">
+                              <span id="heart-@product.ProductId" class="heart"><i onclick="wishList()" class="fas fa-heart"></i></span>
+                              <div style="height: 200px; overflow: hidden;">
+                                  <img src="@product.ImgLink" class="card-img-top" alt="@product.Name" style="object-fit: contain; height: 100%;">
+                              </div>
+                              <div class="card-body">
+                                  @if (User.IsInRole("Admin"))
+                                  {
+                                      <a asp-controller="Admin" asp-action="EditProducts" asp-route-id="@product.ProductId" class="card-link product-link">Edit Product</a>
+                                      <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="card-link product-link">Delete Product</a>
+                                  }
+                                  else if (User.IsInRole("Customer"))
+                                  {
+                                      <a asp-controller="Customer" asp-action="ProductDescription" asp-route-id="@product.ProductId" class="btnspecial btn-yellowspecial">Add to Cart</a>
+                                  }
                       
-                          <hr>
-                          <center>
-                              <h5 class="card-title">@product.Name</h5>
-                              <h5 class="card-title">$@product.Price</h5>
-                          </center>
-                      </div>
+                                  <hr>
+                                  <center>
+                                      <h5 class="card-title">@product.Name</h5>
+                                      <h5 class="card-title">$@product.Price</h5>
+                                  </center>
+                              </div>
 
-                    </div>
-                  </a>
-                </div>
+                          </div>
+                      </a>
+                  </div>
               }
-            </div>
-            <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-category="@Model.CurrentCategory" class="btn-group pull-right m-1"></div>
+          </div>
+          <div class="d-flex justify-content-end">
+              <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-category="@Model.CurrentCategory" class="btn-group text-end mb-5"></div>
+          </div>
         </div>
     </div>
 </div>

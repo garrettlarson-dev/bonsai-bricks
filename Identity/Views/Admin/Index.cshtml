@@ -7,37 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
     <style>
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
-@if (User?.Identity?.IsAuthenticated ?? false)
-{
-    <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
-}
+
 <div class="container">
-    <div class="column">
-        <a href="/Customer/Index" class="button">Products</a>
-    </div>
-    <div class="column">
-        <a href="/Admin/AllUsers" class="button">Users</a>
-    </div>
-    <div class="column">
-        <a href="/Admin/Orders" class="button">Orders</a>
+    <h1 class="mt-5">Admin Page</h1>
+    <div class="row">
+        <div class="col-lg-3">
+            @if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
+            }
+        </div>
+        <div class="col-lg-3">
+            <a href="/Customer/Index" class="btn btn-secondary">Products</a>
+        </div>
+        <div class="col-lg-3">
+        <a href="/Admin/AllUsers" class="btn btn-secondary">Users</a>
+        </div>
+        <div class="col-lg-3">
+        <a href="/Admin/Orders" class="btn btn-secondary">Orders</a>
+        </div>
+        
     </div>
 </div>
 

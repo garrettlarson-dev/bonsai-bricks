@@ -6,7 +6,7 @@
     <title>Shopping Cart</title>
     <!-- Add other necessary meta tags and CSS links -->
 </head>
-<body>
+<div class="container">
     <h1>Shopping Cart</h1>
         <form asp-action="UpdateCart" asp-controller="Customer" method="post">
             <table class="table">
@@ -42,5 +42,5 @@
             <a class="btn-primary btn" asp-area="" asp-controller="Customer" asp-action="Checkout">Go to Checkout</a>
         </form>
         <p>Total: @Model.Lines.Sum(item => item.Product.Price * item.Quantity)</p>
-</body>
+</div>
 </html>
