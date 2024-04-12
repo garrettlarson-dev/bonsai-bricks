@@ -6,12 +6,12 @@ public class PredictionService
 {
     private readonly AppIdentityDbContext _context;
     private readonly InferenceSession _session;
-    public PredictionService(AppIdentityDbContext context)
+    public PredictionService(AppIdentityDbContext context, IWebHostEnvironment env)
     {
         _context = context;
         var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        var modelPath = Path.Combine(baseDir, "decision_tree_model.onnx");
-        _session = new InferenceSession("/Users/garrettlarson/Documents/GitHub/IntexII/bonsai-bricks/Identity/decision_tree_model.onnx");
+        var modelPath = Path.Combine(env.WebRootPath, "decision_tree_model.onnx");
+        _session = new InferenceSession(modelPath);
     }
 
     public int PredictFraud(Order order, AppUser cust)
