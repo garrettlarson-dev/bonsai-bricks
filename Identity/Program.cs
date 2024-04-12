@@ -1,4 +1,5 @@
 using Identity.CustomPolicy;
+using Identity.CustomTagHelpers;
 using Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     )
 );
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<PredictionService>();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -28,6 +30,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = ".AspNetCore.Identity.Application";
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     options.SlidingExpiration = true;
+});
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.ConsentCookieValue = "true";
 });
 
 builder.Services.Configure<IdentityOptions>(opts =>
@@ -81,6 +89,14 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Lockout.MaxFailedAccessAttempts = 3;
 });
 
+builder.Services.AddAuthentication()
+    .AddGoogle(opts =>
+    {
+        opts.ClientId = "838146018695-a4hp8qifmjq6dbntp494u6lpotol4g7u.apps.googleusercontent.com";
+        opts.ClientSecret = "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";
+        opts.SignInScheme = IdentityConstants.ExternalScheme;
+    });
+
 /*builder.Services.Configure<IdentityOptions>(opts =>
 {
     opts.SignIn.RequireConfirmedEmail = true;
@@ -99,10 +115,23 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCookiePolicy();
 app.UseRouting();
+
+// Add CSP header middleware
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; connect-src 'self' http://localhost:* ws://localhost:*; " +
+                                                            "img-src 'self' https://m.media-amazon.com/images/ https://www.lego.com/cdn/ https://images.brickset.com/sets/ https://www.brickeconomy.com/resources/images/sets/ data:; " +
+                                                            "script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com");
+    await next();
+});
+
+
 
 app.UseSession(); // Enable session before UseEndpoints
 

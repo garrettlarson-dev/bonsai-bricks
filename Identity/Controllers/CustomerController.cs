@@ -7,6 +7,9 @@ using System.Security.Claims;
 using Identity.Models.ViewModelsTwo;
 using Identity.Models.ViewModels;
 using Identity.CustomTagHelpers;
+using Newtonsoft.Json;
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace Identity.Controllers
 {
@@ -15,11 +18,13 @@ namespace Identity.Controllers
         private readonly AppIdentityDbContext _context;
         private UserManager<AppUser> userManager;
         private const string CartSessionKey = "Cart";
+        private readonly PredictionService _prediction;
 
-        public CustomerController(AppIdentityDbContext context, UserManager<AppUser> userMgr)
+        public CustomerController(AppIdentityDbContext context, UserManager<AppUser> userMgr, PredictionService prediction)
         {
             _context = context;
             userManager = userMgr;
+            _prediction = prediction;
         }
 
         public IActionResult Index(string category, string primaryColor, int pageNum = 1)
@@ -88,7 +93,6 @@ namespace Identity.Controllers
                 ProductName2 = product,
                 RelatedProducts = relatedProducts
             };
-
             return View(productRecViewModel);
         }
 
@@ -190,6 +194,11 @@ namespace Identity.Controllers
             return RedirectToAction("Cart");
         }
         
+        public IActionResult LegoBuilder()
+        {
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Checkout()
         {
@@ -219,13 +228,28 @@ namespace Identity.Controllers
             }
             return View(cart);
         }
+        
 
         
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(string street, string city, string state, string zip, string country, string bank, string typeOfCard)
         {
+            if (User == null)
+            {
+                // Handle the case where User is null
+                return NotFound();
+            }
+
             var user = await userManager.GetUserAsync(User); // Assuming you have a UserManager injected
-            var customerId = user?.CustomerId; // Replace this with your actual logic to get the CustomerId
+
+            if (user == null)
+            {
+                // Handle the case where user is null
+                return NotFound();
+            }
+
+            var customerId = user.CustomerId; // Now we know user is not null
+
             var cart = GetCurrentCart();
             
             var order = new Order
@@ -236,7 +260,7 @@ namespace Identity.Controllers
                 DayOfWeek = DateTime.Now.DayOfWeek.ToString(),
                 Time = (byte)DateTime.Now.Hour,
                 EntryMode = "CVC",
-                Amount = (short?) cart.CalculateTotal(), // Calculate the amount based on the cart contents
+                Amount = cart.CalculateTotal(), // Calculate the amount based on the cart contents
                 TypeOfTransaction = "Online",
                 CountryOfTransaction = country,
                 ShippingAddress = $"{street}, {city}, {state}, {zip}, {country}",
@@ -244,18 +268,29 @@ namespace Identity.Controllers
                 TypeOfCard = typeOfCard,
                 Fraud = 0 // Determine how to set this value in your application logic
             };
-
-            // Add logic to save the order and perform other necessary operations
+            
+            var fraud = _prediction.PredictFraud(order, user);
+            order.Fraud = (byte) fraud;
+            HttpContext.Session.Remove(CartSessionKey);
             _context.Orders.Add(order);
             _context.SaveChanges();
-            HttpContext.Session.Remove(CartSessionKey);
-
-            return View("OrderConfirmation", order); // Redirect to an order confirmation page
+            if (fraud == 0)
+            {
+                return View("OrderConfirmation", order); // Redirect to an order confirmation page
+            }
+            return View("OrderPending", order);
         }
-
         
+        // public IActionResult FraudCheck()
+        // {
+        //     // Retrieve the order from TempData
+        //     var orderJson = TempData["Order"] as string;
+        //     var order = JsonConvert.DeserializeObject<Order>(orderJson);
+        //
+        //     
+        // }
         
-        [HttpGet]
+            [HttpGet]
         public IActionResult OrderConfirmation()
         {
             // Retrieve the cart from the session
@@ -272,6 +307,24 @@ namespace Identity.Controllers
             // And then redirect to an order confirmation view or another appropriate view
             return View(); // Make sure to create this view
         }       
+        
+        [HttpGet]
+        public IActionResult OrderPending()
+        {
+            // Retrieve the cart from the session
+            var cart = GetCurrentCart();
+        
+            // Here you should add the logic to process the cart and create an order.
+            // This typically involves creating an order record in the database,
+            // decrementing stock, processing payment, etc.
+
+            // After order processing:
+            // You might want to clear the cart:
+            HttpContext.Session.Remove(CartSessionKey);
+        
+            // And then redirect to an order confirmation view or another appropriate view
+            return View(); // Make sure to create this view
+        }
 
     }
 

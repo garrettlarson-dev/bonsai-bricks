@@ -222,9 +222,12 @@
             @await Component.InvokeAsync("ProductFilterColor")
         </div>
         <div class="col-md-9">
-            <div class="d-flex justify-content-end mb-3">
-                <a asp-controller="Admin" asp-action="AddProducts" class="btn btn-primary">Add Product</a>
-            </div>
+          <div class="d-flex justify-content-end mb-3">
+            @if (User.IsInRole("Admin"))
+                                      {
+                                        <a asp-controller="Admin" asp-action="AddProducts" class="btn btn-primary">Add Product</a>
+                                      }
+          </div>
             <div class="d-flex flex-wrap">
               @foreach (var product in Model.Products)
               {
